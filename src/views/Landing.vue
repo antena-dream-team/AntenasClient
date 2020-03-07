@@ -5,7 +5,7 @@
             <Logo variant="blue" />
             <div class="actions">
                 <CustomButton class="button" @click="goSignUp()">
-                    Cadastrar
+                    Se cadastrar
                 </CustomButton>
                 <CustomButton variant="white" class="button" @click="goLogin()">
                     Entrar
@@ -83,7 +83,6 @@ export default {
     }
 
     &__body {
-        height: calc(100vh - 100px);
         display: flex;
         justify-content: space-between;
         margin-top: spacing(5);

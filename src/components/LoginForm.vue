@@ -131,7 +131,7 @@ export default {
         padding: spacing(3);
         border-radius: 4px;
         background-color: white;
-        box-shadow: shadow-depth(3);
+        box-shadow: shadow-depth(2);
 
         &__title {
             margin-bottom: spacing(3);

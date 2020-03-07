@@ -1,6 +1,6 @@
 <template>
 	<div class="toolbar">
-		<Logo class="toolbar__logo" />
+		<Logo variant="blue" class="toolbar__logo" />
 		<Profile class="toolbar__profile" />
 	</div>
 </template>
@@ -30,9 +30,9 @@ export default {
 	width: calc(100% - #{spacing(3)} * 2);
 	height: 70px;
 	padding: 0 spacing(3);
-	background-color: $color-blue;
-	color: white;
-	box-shadow: shadow-depth(3);
+	background-color: white;
+	color: $color-blue;
+	box-shadow: shadow-depth(2);
 
 	&__search {
 		flex-grow: 1;
