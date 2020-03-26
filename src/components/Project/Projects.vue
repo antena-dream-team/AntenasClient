@@ -3,7 +3,7 @@
         <div class="box__header">
             <h4 class="title">Meus projetos</h4>
             <div class="actions">
-                <CustomButton class="button" @click="goSignUp()">
+                <CustomButton class="button" @click="createProject()">
                     Criar
                 </CustomButton>
             </div>
@@ -66,6 +66,9 @@ export default {
         },
         selectProject(project) {
             this.$emit('select', project);
+        },
+        createProject() {
+            this.$emit('create');
         }
     },
 	data() {

@@ -54,7 +54,10 @@
             <div class="content">
                 <i class="material-icons icon">touch_app</i>
                 <p class="text">Selecione um projeto ao lado para saber mais</p>
-                <CustomButton class="button">
+                <CustomButton 
+                    class="button"
+                    @click="createProject()" 
+                >
                     Criar projeto
                 </CustomButton>
             </div>
@@ -81,6 +84,9 @@ export default {
         },
         closeProject() {
             this.$emit('close');
+        },
+        createProject() {
+            this.$emit('create');
         }
     },
 	data() {

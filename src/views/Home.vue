@@ -4,12 +4,23 @@
     <div class="home__wrapper">
       <Projects 
         class="home__projects" 
-        @select="selectProject" />
+        @select="selectProject"
+        @create="createProject"
+      />
       
-      <ProjectView 
+      <ProjectView
+        v-if="!creating"
         class="home__project-view" 
         :project="selectedProject"
+        @create="createProject"
         @close="deselectProject"
+      />
+      
+      <ProjectCreation 
+        v-if="creating"
+        class="home__project-view" 
+        @select="selectProject"
+        @close="stopCreation" 
       />
     </div>
   </div>
@@ -19,25 +30,37 @@
 import Toolbar from '@/components/Toolbar/Toolbar.vue'
 import Projects from '@/components/Project/Projects.vue'
 import ProjectView from '@/components/Project/ProjectView.vue'
+import ProjectCreation from '@/components/Project/ProjectCreation.vue'
 
 export default {
   name: 'Home',
   components: {
     Toolbar,
     Projects,
-    ProjectView
+    ProjectView,
+    ProjectCreation
   },
   methods: {
     selectProject(project) {
+      this.creating = false;
       this.selectedProject = project;
     },
     deselectProject() {
       this.selectedProject = {};
+    },
+    createProject() {
+      this.creating = true;
+      this.deselectProject();
+    },
+    stopCreation() {
+      this.creating = false;
+      this.deselectProject();
     }
   },
   data() {
     return {
-      selectedProject: {}
+      selectedProject: {},
+      creating: false
     }
   }
 }
