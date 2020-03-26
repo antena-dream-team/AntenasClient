@@ -8,7 +8,7 @@
                 </a>
             </div>
             <div class="box__body project-body">
-                <Timeline :phase="project.phase" class="project-view__timeline"></Timeline>
+                <ProjectStatus class="project-view__phase" :project="project" />
                 
                 <form class="project-view__form"></form>
                 
@@ -64,7 +64,7 @@
 
 <script>
 import CustomButton from '@/components/Forms/CustomButton.vue'
-import Timeline from '@/components/Timeline.vue'
+import ProjectStatus from '@/components/Project/ProjectStatus.vue'
 
 export default {
     name: 'ProjectView',
@@ -73,7 +73,7 @@ export default {
     },
 	components: {
         CustomButton,
-        Timeline,
+        ProjectStatus,
     },
     methods: {
         hasSelectedProject() {
@@ -127,6 +127,7 @@ export default {
 
         .project-body {
             max-height: 100%;
+            height: calc(100% - 53px - (#{spacing(2)} * 2));
             overflow-y: auto;
         }
     }
@@ -141,7 +142,7 @@ export default {
         }
         
         .label {
-            color: #A6A6A6;
+            color: $color-gray-dark;
             font-weight: $font-weight-semibold;
             margin-bottom: spacing(1);
         }
@@ -159,6 +160,10 @@ export default {
         font-weight: $font-weight-semibold;
         margin-right: spacing(2);
         display: block;
+    }
+
+    &__phase {
+        margin-bottom: spacing(2);
     }
 }
 </style>

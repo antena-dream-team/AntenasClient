@@ -34,11 +34,17 @@
 
 <script>
 import CustomButton from '@/components/Forms/CustomButton.vue'
+import ProjectService from '@/services/ProjectService.js'
 
 export default {
 	name: 'Projects',
 	components: {
         CustomButton
+    },
+    mounted() {
+        ProjectService
+            .getProjects()
+            .then(projects => this.projects = projects);
     },
     methods: {
         addZero(number) {
@@ -64,28 +70,7 @@ export default {
     },
 	data() {
 		return {
-            projects: [
-                {
-                    id: 0,
-                    title: 'Carro voador',
-                    shortDescription: 'Um carro eletrico movido a gasolina renovavel a base de vento e cenoura',
-                    description: 'Um carro eletrico movido a gasolina renovavel a base de vento e cenoura. Um carro eletrico movido a gasolina renovavel a base de vento e cenoura Um carro eletrico movido a gasolina renovavel a base de vento e cenoura Um carro eletrico movido a gasolina renovavel a base de vento e cenoura',
-                    techDescription: 'Um carro feito em react com graxa em pó.',
-                    externalLink1: 'https://google.com.br',
-                    externalLink2: 'https://google.com.br',
-                    lastUpdate: new Date().getTime(),
-                    phase: 4,
-                    status: 'WAITING'
-                },
-                {
-                    id: 1,
-                    phase: 1,
-                    title: 'Avião voador',
-                    shortDescription: 'Avião de papel que voa pra caralho no ar e na terra',
-                    lastUpdate: new Date().getTime(),
-                    status: 'REFUSED'
-                }
-            ]
+            projects: []
 		};
 	}
 }
@@ -146,19 +131,19 @@ export default {
 
         &--waiting {
             .status {
-                background-color: #2C73DD;
+                background-color: $color-blue-dark;
             }
         }
 
         &--processing {
             .status {
-                background-color: #FFF72C;
+                background-color: $color-yellow;
             }
         }
 
         &--refused {
             .status {
-                background-color: #DD2C2C;
+                background-color: $color-red;
             }
         }
 
