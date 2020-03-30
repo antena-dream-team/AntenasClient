@@ -14,12 +14,14 @@
                     href
                     @click.prevent="selectProject(project)" 
                     class="projects__item-content"
-                    :class="`projects__item-content--${project.status.toLowerCase()}`">
+                    :class="`projects__item-content--${project.status.toLowerCase()}`"
+                    :title="project.short_description"
+                >
                     <div class="status"></div>
                     <div class="content">
                         <span class="title">{{ project.title }}</span>
                         <p class="description">
-                            {{ project.shortDescription }}
+                            {{ project.short_description }}
                         </p>
                         <div class="updated">
                             <span>Atualizado em:</span>

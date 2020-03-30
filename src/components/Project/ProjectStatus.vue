@@ -28,6 +28,11 @@ export default {
     props: {
         project: Object
     },
+    computed: {
+        phases() {
+            return this.$store.state.phases;
+        }
+    },
     components: {
         Timeline
     },
@@ -40,17 +45,7 @@ export default {
         },
         getAccessClass () {
             let base = 'project-status__access';
-            let modificador = base + '--';
-
-            if (['WAITING', 'PENDING'].includes(this.project.status)) {
-                modificador += 'active';
-            }
-            else if (this.project.status === 'REFUSED') {
-                modificador += 'refused';
-            }
-            else {
-                modificador += 'done';
-            }
+            let modificador = base + `--${this.project.status.toLowerCase()}`;
 
             return [base, modificador];
         },
@@ -64,7 +59,7 @@ export default {
         },
         getButtonContent () {
             if (['WAITING', 'PENDING'].includes(this.project.status)) {
-                return this.project.phase;
+                return this.phases[this.project.phase];
             }
             else if (this.project.status === 'REFUSED') {
                 return 'Recusado';
@@ -129,7 +124,29 @@ export default {
                 }
             }
 
-            &--active {
+            &--waiting {
+                
+                .project-status__button {
+                    color: $color-blue-dark;
+                }
+
+                + .project-status__popup {
+                    background-color: rgba($color-blue-dark, $background-opacity);
+                }
+            }
+
+            &--pending {
+                
+                .project-status__button {
+                    color: $color-blue-dark;
+                }
+
+                + .project-status__popup {
+                    background-color: rgba($color-blue-dark, $background-opacity);
+                }
+            }
+
+            &--concluded {
                 
                 .project-status__button {
                     color: $color-blue-dark;

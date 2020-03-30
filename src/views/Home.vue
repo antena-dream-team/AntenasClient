@@ -19,7 +19,7 @@
       <ProjectCreation 
         v-if="creating"
         class="home__project-view" 
-        @select="selectProject"
+        @created="selectProject"
         @close="stopCreation" 
       />
     </div>
@@ -42,6 +42,7 @@ export default {
   },
   methods: {
     selectProject(project) {
+      console.log(project);
       this.creating = false;
       this.selectedProject = project;
     },

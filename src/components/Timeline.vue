@@ -18,19 +18,13 @@ export default {
     props: {
         phase: Number
     },
-    components: {
+    computed: {
+        phases() {
+            return this.$store.state.phases;
+        }
     },
     data() {
-        return {
-            phases: [
-                'Cadastro Inicial',
-                'Avaliação Inicial',
-                'Cadastro Detalhado',
-                'Avaliação Detalhada',
-                'Reunião',
-                'Entrega'
-            ]
-        };
+        return { };
     },
     methods: {
     

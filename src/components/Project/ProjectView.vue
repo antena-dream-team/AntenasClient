@@ -13,39 +13,24 @@
                 <form class="project-view__form"></form>
                 
                 <div class="project-view__info">
-                    <div class="project-view__field" v-if="project.shortDescription">
+                    <div class="project-view__field" v-if="project.short_description">
                         <p class="label">Descrição breve:</p>
-                        <p class="text">{{ project.shortDescription }}</p>
+                        <p class="text">{{ project.short_description }}</p>
                     </div>
                     
-                    <div class="project-view__field" v-if="project.description">
+                    <div class="project-view__field" v-if="project.complete_description">
                         <p class="label">Descrição completa:</p>
-                        <p class="text">{{ project.description }}</p>
+                        <p class="text">{{ project.complete_description }}</p>
                     </div>
                     
-                    <div class="project-view__field" v-if="project.techDescription">
+                    <div class="project-view__field" v-if="project.technology_description">
                         <p class="label">Descrição da tecnologia:</p>
-                        <p class="text">{{ project.techDescription }}</p>
+                        <p class="text">{{ project.technology_description }}</p>
                     </div>
 
-                    <div 
-                        class="project-view__field project-view__field--horizontal" 
-                        v-if="project.externalLink1 || project.externalLink2">
-                        
-                        <a  v-if="project.externalLink1"
-                            class="project-view__link" 
-                            :href="project.externalLink1"
-                            target="_blank">
-
-                            Link externo 1
-                        </a>
-                        <a  v-if="project.externalLink2"
-                            class="project-view__link" 
-                            :href="project.externalLink2"
-                            target="_blank">
-
-                            Link externo 2
-                        </a>
+                    <div class="project-view__field" v-if="project.notes">
+                        <p class="label">Notas adicionais:</p>
+                        <p class="text">{{ project.notes }}</p>
                     </div>
                 </div>
             </div>
