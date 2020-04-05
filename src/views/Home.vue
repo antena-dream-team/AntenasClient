@@ -42,7 +42,6 @@ export default {
   },
   methods: {
     selectProject(project) {
-      console.log(project);
       this.creating = false;
       this.selectedProject = project;
     },

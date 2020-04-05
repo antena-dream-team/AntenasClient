@@ -16,7 +16,7 @@
                 <i class="material-icons close-icon">close</i>
             </a>
 
-            <Timeline :phase="project.phase" />
+            <Timeline :progress="project.progress" />
         </div>
     </div>
 </template>
@@ -31,6 +31,9 @@ export default {
     computed: {
         phases() {
             return this.$store.state.phases;
+        },
+        projectStatus() {
+            return this.$utils.getProjectStatus(this.project);
         }
     },
     components: {
@@ -45,12 +48,12 @@ export default {
         },
         getAccessClass () {
             let base = 'project-status__access';
-            let modificador = base + `--${this.project.status.toLowerCase()}`;
+            let modificador = base + `--${this.projectStatus.toLowerCase()}`;
 
             return [base, modificador];
         },
         getLabel () {
-            if (['WAITING', 'PENDING'].includes(this.project.status)) {
+            if (['WAITING', 'PENDING'].includes(this.projectStatus)) {
                 return 'Fase do projeto';
             }
             else {
@@ -58,10 +61,10 @@ export default {
             }
         },
         getButtonContent () {
-            if (['WAITING', 'PENDING'].includes(this.project.status)) {
-                return this.phases[this.project.phase];
+            if (['WAITING', 'PENDING'].includes(this.projectStatus)) {
+                return this.phases[this.project.progress];
             }
-            else if (this.project.status === 'REFUSED') {
+            else if (this.project.refused) {
                 return 'Recusado';
             }
             else {
@@ -138,22 +141,22 @@ export default {
             &--pending {
                 
                 .project-status__button {
-                    color: $color-blue-dark;
+                    color: $color-yellow-dark;
                 }
 
                 + .project-status__popup {
-                    background-color: rgba($color-blue-dark, $background-opacity);
+                    background-color: rgba($color-yellow-dark, $background-opacity);
                 }
             }
 
             &--concluded {
                 
                 .project-status__button {
-                    color: $color-blue-dark;
+                    color: $color-green-dark;
                 }
 
                 + .project-status__popup {
-                    background-color: rgba($color-blue-dark, $background-opacity);
+                    background-color: rgba($color-green-dark, $background-opacity);
                 }
             }
         }

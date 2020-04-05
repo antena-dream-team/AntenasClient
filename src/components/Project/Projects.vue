@@ -14,7 +14,7 @@
                     href
                     @click.prevent="selectProject(project)" 
                     class="projects__item-content"
-                    :class="`projects__item-content--${project.status.toLowerCase()}`"
+                    :class="`projects__item-content--${$utils.getProjectStatus(project).toLowerCase()}`"
                     :title="project.short_description"
                 >
                     <div class="status"></div>
@@ -60,7 +60,7 @@ export default {
         },
         formatDate(datetime) {
             let date = new Date(datetime);
-            let day = date.getDay();
+            let day = date.getDate();
             let month = date.getMonth();
             let year = date.getFullYear();
 
@@ -140,7 +140,7 @@ export default {
             }
         }
 
-        &--processing {
+        &--pending {
             .status {
                 background-color: $color-yellow;
             }
@@ -152,8 +152,10 @@ export default {
             }
         }
 
-        &--approved {
-
+        &--concluded {
+            .status {
+                background-color: $color-green;
+            }
         }
     }
 
@@ -165,6 +167,12 @@ export default {
         &:first-child {
             margin-top: 0;
         }
+    }
+
+    &__list {
+        max-height: 100%;
+        height: calc(100% - 53px - (#{spacing(2)} * 2));
+        overflow-y: auto;
     }
 }
 </style>

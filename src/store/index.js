@@ -5,14 +5,14 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    phases: [
-      'Cadastro Inicial',
-      'Avaliação Inicial',
-      'Cadastro Detalhado',
-      'Avaliação Detalhada',
-      'Reunião',
-      'Entrega'
-    ],
+    phases: {
+      1: 'Cadastro Inicial',
+      2: 'Avaliação Inicial',
+      3: 'Cadastro Detalhado',
+      4: 'Avaliação Detalhada',
+      5: 'Reunião',
+      6: 'Entrega'
+    },
     projects: []
   },
   mutations: {

@@ -2,11 +2,11 @@
     <ul class="timeline">
         <li 
             class="timeline__phase" 
-            :class="{ 'timeline__phase--active': index === phase }" 
-            v-for="(currentPhase, index) in phases" 
-            :key="`phase-${index}`">
+            :class="{ 'timeline__phase--active': phase == progress }" 
+            v-for="(currentPhase, phase) in phases" 
+            :key="`phase-${phase}`">
 
-            <span>{{ index + 1 }}. {{ currentPhase }}</span>
+            <span>{{ phase }}. {{ currentPhase }}</span>
         </li>
     </ul>
 </template>
@@ -16,7 +16,7 @@
 export default {
     name: 'Timeline',
     props: {
-        phase: Number
+        progress: Number
     },
     computed: {
         phases() {
