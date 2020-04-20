@@ -10,7 +10,11 @@
             <div class="box__body project-body">
                 <ProjectStatus class="project-view__phase" :project="project" />
                 
-                <form class="project-view__form"></form>
+                <ProjectUpdateForm 
+                    v-if="$utils.getProjectStatus(project) === 'WAITING'"
+                    :project="project"
+                    class="project-view__form" 
+                />
                 
                 <div class="project-view__info">
                     <div class="project-view__field" v-if="project.short_description">
@@ -53,6 +57,7 @@
 <script>
 import CustomButton from '@/components/Forms/CustomButton.vue'
 import ProjectStatus from '@/components/Project/ProjectStatus.vue'
+import ProjectUpdateForm from '@/components/Project/ProjectUpdateForm.vue'
 
 export default {
     name: 'ProjectView',
@@ -62,6 +67,7 @@ export default {
 	components: {
         CustomButton,
         ProjectStatus,
+        ProjectUpdateForm,
     },
     methods: {
         hasSelectedProject() {
@@ -82,6 +88,7 @@ export default {
 
 <style scoped lang="scss">
 .project-view {
+
     &__empty {
         
         display: flex;
@@ -154,6 +161,10 @@ export default {
     }
 
     &__phase {
+        margin-bottom: spacing(2);
+    }
+
+    &__form {
         margin-bottom: spacing(2);
     }
 }

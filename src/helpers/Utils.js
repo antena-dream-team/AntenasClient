@@ -1,11 +1,11 @@
 export default {
     getProjectStatus(project) {
         let isMeetingPhase = project.progress === 5;
-        let hasMeeting = !!project.meeting;
+        let hasMeeting = project.meeting && project.meeting.choosenDate;
         
         let isRefused = project.refused;
         let isConcluded = project.progress === 6;
-        let isWaiting = project.progress === 3 || (isMeetingPhase && hasMeeting);
+        let isWaiting = project.progress === 3 || (isMeetingPhase && !hasMeeting);
 
         if (isRefused) {
             return 'REFUSED';

@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import EventBus from '@/helpers/EventBus.js'
 import CustomButton from '@/components/Forms/CustomButton.vue'
 import ProjectService from '@/services/ProjectService.js'
 
@@ -44,6 +45,15 @@ export default {
         CustomButton
     },
     mounted() {
+        EventBus.$on('UPDATE-PROJECT', updatedProject => {
+            this.projects.some((project, index) => {
+                if (updatedProject.id === project.id) {
+                    this.projects[index] = updatedProject;
+                    return true;
+                }
+            });
+        });
+
         ProjectService
             .getProjects()
             .then(projects => this.projects = projects);

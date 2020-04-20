@@ -12,6 +12,7 @@ let projects = [
         title: 'Patins voador',
         short_description: 'É praticamente um jetpack pro seu pé.',
         complete_description: '',
+        technology_description: '',
         notes: '',
         lastUpdate: new Date().getTime(),
         progress: 3    
@@ -101,6 +102,26 @@ module.exports = {
             };
 
             projects.push(project);
+            resolve(project);
+        });
+    },
+
+    updateProject(project) {
+        return new Promise(resolve => {
+            projects.some((curProject, index) => {
+                if (curProject.id === project.id) {
+
+                    if (project.progress === 3) {
+                        project.progress = 4;
+                    }
+
+                    console.log(project)
+
+                    projects[index] = project;
+                    return true;
+                }
+            });
+
             resolve(project);
         });
     }
