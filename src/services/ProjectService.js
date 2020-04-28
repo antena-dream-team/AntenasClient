@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 let projects = [
     {
         id: 1,
@@ -84,7 +86,7 @@ let projects = [
     }
 ];
 
-module.exports = {
+export default {
 
     getProjects() {
         return new Promise(resolve => {

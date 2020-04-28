@@ -1,4 +1,9 @@
-# antenas
+# Antenas Client
+
+Membros:
+- [Danielly Jardim](https://github.com/daniellygj)
+- [Fábio Romeiro](https://github.com/FabioRomeiro)
+- [Mateus Machado](https://github.com/Mateusmsouza)
 
 ## Project setup
 ```

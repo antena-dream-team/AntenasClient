@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 let users = [
     {
         name: 'Fábio Lucas Romeiro de Castro',
@@ -7,7 +9,7 @@ let users = [
     }
 ];
 
-module.exports = {
+export default {
 
     authenticateUser(user) {
         return new Promise(resolve => {
