@@ -5,7 +5,8 @@ let users = [
         name: 'Fábio Lucas Romeiro de Castro',
         email: 'flromeiroc@gmail.com',
         password: '123456',
-        role: 'Aluno'
+        role: 'Aluno',
+        token: 'qweyu2u948jeisdj'
     }
 ];
 
@@ -13,8 +14,8 @@ export default {
 
     authenticateUser(user) {
         return new Promise(resolve => {
-            let userExists = users.some(usr => usr.email === user.email && usr.password === user.password);
-            resolve(userExists);
+            let currentUser = users.filter(usr => usr.email === user.email && usr.password === user.password)[0];
+            resolve(currentUser && currentUser.token);
         });
     },
 
@@ -22,6 +23,19 @@ export default {
         return new Promise(resolve => {
             users.push(user);
             resolve(user);
+        });
+    },
+
+    getUserInfo(token) {
+        return new Promise(resolve => {
+            let user = users.filter(user => user.token === token)[0];
+            
+            resolve({
+                name: user.name,
+                email: user.email,
+                token: user.token,
+                role: user.role
+            });
         });
     }
 };

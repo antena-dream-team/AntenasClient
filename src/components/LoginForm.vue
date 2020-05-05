@@ -108,9 +108,12 @@ export default {
                         email: this.email,
                         password: this.password
                     })
-                    .then(exists => {
-                        if (exists) {
-                            this.$router.push('/home');
+                    .then(token => {
+                        if (token) {
+                            window.localStorage.setItem('USER_TOKEN', token);
+                            this.$store.dispatch('loadUserInfo', { token }).then(() => {
+                                this.$router.push('/home');
+                            });
                         }
                         else {
                             alert('ERROU');

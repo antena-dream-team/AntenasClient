@@ -1,10 +1,7 @@
 <template>
     <a href class="profile">
         <div class="profile__info">
-            <span class="profile__name">Joseph Lincon</span>
-        </div>
-        <div class="profile__pic">
-            <img src="https://picsum.photos/40" alt="Foto de perfil">
+            <span class="profile__name">{{ user.name }}</span>
         </div>
     </a>
 </template>
@@ -13,7 +10,10 @@
 
 export default {
     name: 'Profile',
-    components: {
+    computed: {
+        user() {
+            return this.$store.state.user;
+        }
     }
 }
 </script>
@@ -24,20 +24,11 @@ export default {
         display: flex;
         align-items: center;
 
-        &__pic {
-
-            margin-left: spacing(2);
-            
-            img {
-                border-radius: 50%;
-            }
-        }
-
         &__info {
             display: flex;
             flex-direction: column;
             text-align: right;
-            color: white;
+            color: $color-black;
         }
 
         &__name {
