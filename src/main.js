@@ -8,7 +8,12 @@ import MenuIcon from 'vue-material-design-icons/Menu.vue';
 
 import axios from'axios'
 
-axios.defaults.baseURL = 'http://localhost:8081/springRest';
+if (process.env.NODE_ENV === 'production') {
+  axios.defaults.baseURL = process.env.PROD_API;
+}
+else {
+  axios.defaults.baseURL = process.env.LOCAL_API;
+}
 
 axios.interceptors.request.use(config => { 
   config.headers.Authorization = 'um token'
