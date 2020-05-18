@@ -13,8 +13,8 @@ jobs:
           steps:
             - run:
                 name: Installing dependences
-                  command: |
-                    npm install
+                command: |
+                  npm install
             - run: 
                 name: Building project
                 command: |
