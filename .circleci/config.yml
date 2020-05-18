@@ -20,13 +20,13 @@ jobs:
                   unzip awscliv2.zip
                   sudo ./aws/install
             - deploy:
-              name: deploy to AWS
-              command: |
-                if [ "${CIRCLE_BRANCH}" = "master" ]; then
-                  aws s3 sync $BUILD_DIR s3://antenasclient/ --delete
-                else
-                  echo "Not master branch, dry run only"
-                fi
+                name: deploy to AWS
+                command: |
+                  if [ "${CIRCLE_BRANCH}" = "master" ]; then
+                    aws s3 sync $BUILD_DIR s3://antenasclient/ --delete
+                  else
+                    echo "Not master branch, dry run only"
+                  fi
 workflows:
     build-and-test:
       jobs:
