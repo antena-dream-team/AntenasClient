@@ -13,10 +13,12 @@ jobs:
           steps:
             - run:
                 name: Installing dependences
-                  command: npm install
+                  command: |
+                    npm install
             - run: 
                 name: Building project
-                command: npm run build
+                command: |
+                  npm run build
             - run:
                 name: Installing AWS CLI
                 command: |
@@ -33,7 +35,8 @@ jobs:
                   fi
             - run:
                 name: Cleaning Cloudfront's distribution cache
-                command: echo "CALMOU TAMO TRABALHANO NISSO AINDA"
+                command: |
+                  echo "CALMOU TAMO TRABALHANO NISSO AINDA"
 workflows:
     build-and-test:
       jobs:
