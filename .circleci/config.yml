@@ -6,7 +6,7 @@ jobs:
     executor:
       name: node/default
     environment:
-      BUILD_DIR: ~/dist
+      BUILD_DIR: ./dist/
     steps:
       - checkout
       - node/with-cache:
