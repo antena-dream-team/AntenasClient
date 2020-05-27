@@ -7,20 +7,26 @@ Membros:
 - [Mateus Machado](https://github.com/Mateusmsouza)
 - [Thiago Dias](https://github.com/ThiagoDisk)
 
-## Project setup
+
+---
+
+## Inicializando o Antenas Client
+
+### Instale as dependencias
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Rode no ambiente de desenvolvimento
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Compile para produção
 ```
 npm run build
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+---
+
+**Saiba mais sobre o sistema e seu funcionamento na [Wiki](https://github.com/antena-dream-team/AntenasClient/wiki)**
