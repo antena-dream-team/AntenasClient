@@ -1,7 +1,9 @@
 version: 2.1
+
 orbs:
-  node: circleci/node@1.1.6
-  aws-s3: circleci/aws-s3@1.0.15
+    node: circleci/node@1.1.6
+    aws-s3: circleci/aws-s3@1.0.15
+
 jobs:
   install_dependeces:
     executor:
@@ -14,26 +16,26 @@ jobs:
             npm install
 
   build:
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - run: 
-          name: Building project
-          command: |
-            npm run build
-  
+      executor:
+        name: node/default
+      steps:
+        - checkout
+        - run: 
+            name: Building project
+            command: |
+              npm run build
+
   sync_s3:
     docker:
       - image: 'cimg/python:3.6'
     steps:
       - checkout
       - aws-s3/sync:
-            aws-region: AWS_REGION
-            from: dist
-            overwrite: true
-            to: 's3://antenasclient/'
-  
+          aws-region: AWS_REGION
+          from: dist
+          overwrite: true
+          to: 's3://antenasclient/'
+
   invalidate_cloudfront_distribution:
     steps:
       - checkout
@@ -45,19 +47,35 @@ jobs:
 workflows:
   version: 2
   build:
-    jobs:
-      - install_dependeces
-      
-      - build:
-          requires:
-            - install_dependeces
-      
-      - sync_s3:
-          context: ANTENAS
-          requires:
-            - build
-      
-      - invalidate_cloudfront_distribution:
-          context: ANTENAS
-          requires:
-            - sync_s3
+      jobs:
+        - install_dependeces:
+            context: ANTENA
+            filters:
+              branches:
+                only:
+                  - master
+            message: "Instalando dependencias"
+
+            
+        - build:
+            context: ANTENA
+            requires:
+              - install_dependeces
+
+        - sync_s3:
+            context: ANTENA
+            requires:
+              - build
+            filters:
+              branches:
+                only:
+                  - master
+
+        - invalidate_cloudfront_distribution:
+            context: ANTENA
+            requires:
+              - sync_s3
+            filters:
+              branches:
+                only:
+                 - master
