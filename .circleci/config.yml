@@ -4,7 +4,6 @@ orbs:
   aws-s3: circleci/aws-s3@1.0.15
 jobs:
   build-and-test:
-    context: ANTENA
     executor:
       name: node/default
     environment:
@@ -30,7 +29,9 @@ jobs:
           name: Cleaning Cloudfront's distribution cache
           command: |
             echo "CALMOU TAMO TRABALHANO NISSO AINDA"
+
 workflows:
     build-and-test:
       jobs:
-        - build-and-test
+        - build-and-test:
+          context: ANTENA
