@@ -3,35 +3,61 @@ orbs:
   node: circleci/node@1.1.6
   aws-s3: circleci/aws-s3@1.0.15
 jobs:
-  build-and-test:
+  install_dependeces:
     executor:
       name: node/default
-    environment:
-      BUILD_DIR: ./dist/
     steps:
       - checkout
-      - node/with-cache:
-          steps:
-            - run:
-                name: Installing dependences
-                command: |
-                  npm install
-            - run: 
-                name: Building project
-                command: |
-                  npm run build
+      - run:
+          name: Installing dependences
+          command: |
+            npm install
+
+  build:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - run: 
+          name: Building project
+          command: |
+            npm run build
+  
+  sync_s3:
+    docker:
+      - image: 'cimg/python:3.6'
+    steps:
+      - checkout
       - aws-s3/sync:
-          aws-region: AWS_REGION
-          from: dist
-          overwrite: true
-          to: 's3://antenasclient/'
+            aws-region: AWS_REGION
+            from: dist
+            overwrite: true
+            to: 's3://antenasclient/'
+  
+  invalidate_cloudfront_distribution:
+    steps:
+      - checkout
       - run:
           name: Cleaning Cloudfront's distribution cache
           command: |
             echo "CALMOU TAMO TRABALHANO NISSO AINDA"
 
 workflows:
-    build-and-test:
-      jobs:
-        - build-and-test:
-          context: ANTENA
+  version: 2
+  build:
+    jobs:
+      - install_dependeces
+      
+      - build:
+          requires:
+            - install_dependeces
+      
+      - sync_s3:
+          context: ANTENAS
+          requires:
+            - build
+      
+      - invalidate_cloudfront_distribution:
+          context: ANTENAS
+          requires:
+            - sync_s3
