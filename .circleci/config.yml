@@ -21,17 +21,15 @@ jobs:
                 name: Building project
                 command: |
                   npm run build
-
-           - aws-s3/sync:
-              aws-region: AWS_REGION
-              from: dist
-              overwrite: true
-              to: 's3://antenasclient/'
-
-            - run:
-                name: Cleaning Cloudfront's distribution cache
-                command: |
-                  echo "CALMOU TAMO TRABALHANO NISSO AINDA"
+      - aws-s3/sync:
+          aws-region: AWS_REGION
+          from: dist
+          overwrite: true
+          to: 's3://antenasclient/'
+      - run:
+          name: Cleaning Cloudfront's distribution cache
+          command: |
+            echo "CALMOU TAMO TRABALHANO NISSO AINDA"
 workflows:
     build-and-test:
       jobs:
