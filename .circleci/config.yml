@@ -1,8 +1,10 @@
 version: 2.1
 orbs:
   node: circleci/node@1.1.6
+  aws-s3: circleci/aws-s3@1.0.15
 jobs:
   build-and-test:
+    context: ANTENA
     executor:
       name: node/default
     environment:
@@ -19,20 +21,13 @@ jobs:
                 name: Building project
                 command: |
                   npm run build
-            - run:
-                name: Installing AWS CLI
-                command: |
-                  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-                  unzip awscliv2.zip
-                  sudo ./aws/install
-            - deploy:
-                name: Deploy to S3
-                command: |
-                  if [ "${CIRCLE_BRANCH}" = "master" ]; then
-                    aws s3 sync $BUILD_DIR s3://antenasclient/ --delete
-                  else
-                    echo "Not master branch, dry run only"
-                  fi
+
+           - aws-s3/sync:
+              aws-region: AWS_REGION
+              from: dist
+              overwrite: true
+              to: 's3://antenasclient/'
+
             - run:
                 name: Cleaning Cloudfront's distribution cache
                 command: |
