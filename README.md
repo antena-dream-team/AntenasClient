@@ -1,32 +1,31 @@
 # Antenas Client
 
-Membros:
-- [Danielly Jardim](https://github.com/daniellygj)
-- [Fábio Romeiro](https://github.com/FabioRomeiro)
-- [Giovanna Xavier](https://github.com/giovannaxavierm)
-- [Mateus Machado](https://github.com/Mateusmsouza)
-- [Thiago Dias](https://github.com/ThiagoDisk)
+[Saiba mais sobre o Projeto Antenas](https://github.com/antena-dream-team/Antenas)
 
+## Rodando o projeto
 
----
+### Pré-requisitos
+- [NodeJs](https://nodejs.org/en/download/)
 
-## Inicializando o Antenas Client
+### Instalando dependências do projeto
+1. Abra o seu terminal
+2. Acesse a pasta do AntenasClient
+3. Execute o comando
+    ```
+    npm install
+    ```
 
-### Instale as dependencias
-```
-npm install
-```
+### Executando a aplicação em modo de desenvolvimento
 
-### Rode no ambiente de desenvolvimento
+Com o terminal na pasta do AntenasClient, execute:
 ```
 npm run serve
 ```
 
-### Compile para produção
-```
-npm run build
-```
+### Compilando projeto para deploy
 
----
-
-**Saiba mais sobre o sistema e seu funcionamento na [Wiki](https://github.com/antena-dream-team/AntenasClient/wiki)**
+1. Com o terminal na pasta do AntenasClient, execute:
+    ```
+    npm run build
+    ```
+2. Na raiz do projeto deve ter sido criada uma pasta _dist_, dentro dela há o site estático que de fato vai para o cliente.
