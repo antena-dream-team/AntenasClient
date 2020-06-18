@@ -93,9 +93,13 @@ export default {
         });
     },
 
-    getUserInfo(token) {
+    getUserInfo() {
+        /*
+        return http.get('/user')
+            .then(res => res.data);
+        */
         return new Promise(resolve => {
-            let user = users.filter(user => user.token === token)[0];
+            let user = users.filter(user => user.token === store.state.token)[0];
             
             resolve({
                 name: user.name,

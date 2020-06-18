@@ -1,3 +1,6 @@
+import http from '../helpers/Http'
+import store from '../store/index'
+
 let projects = [
     {
         id: 1,
@@ -87,6 +90,10 @@ let projects = [
 export default {
 
     getProjects() {
+        /* return http
+                .get('/projects')
+                .then(res => res.data);
+        */
         return new Promise(resolve => {
             resolve(projects);
         });
