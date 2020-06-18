@@ -63,7 +63,8 @@ export default {
             role: '',
             roles: [
                 'Aluno',
-                'Empresário',
+                'Professor',
+                'Representante',
                 'CADI',
             ]
         };
@@ -108,17 +109,7 @@ export default {
                         email: this.email,
                         password: this.password
                     })
-                    .then(token => {
-                        if (token) {
-                            window.localStorage.setItem('USER_TOKEN', token);
-                            this.$store.dispatch('loadUserInfo', { token }).then(() => {
-                                this.$router.push('/home');
-                            });
-                        }
-                        else {
-                            alert('ERROU');
-                        }
-                    });
+                    .then(() => this.$router.push('/home'));
             }
         }
     }

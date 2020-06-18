@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 let projects = [
     {
         id: 1,
@@ -7,7 +5,7 @@ let projects = [
         short_description: 'Pensa num patinete que voa. É isto.',
         notes: 'Vai ser bem massa',
         lastUpdate: new Date().getTime(),
-        progress: 2    
+        progress: 2
     },
     {
         id: 2,
