@@ -36,6 +36,16 @@
                         <p class="label">Notas adicionais:</p>
                         <p class="text">{{ project.notes }}</p>
                     </div>
+
+                    <div class="project-view__field" v-if="project.meeting.chosenDate">
+                        <p class="label">Reunião de projeto:</p>
+                        <p class="text">
+                            Local: {{ project.meeting.address.street }}, {{ project.meeting.address.number }} - {{ project.meeting.address.neighborhood }} - {{ project.meeting.address.city }}
+                        </p>
+                        <p class="text">
+                            Data e horario: {{ getDatetime(project.meeting.chosenDate) }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,7 +55,8 @@
                 <p class="text">Selecione um projeto ao lado para saber mais</p>
                 <CustomButton 
                     class="button"
-                    @click="createProject()" 
+                    @click="createProject()"
+                    v-if="$store.getters.isRepresentative"
                 >
                     Criar projeto
                 </CustomButton>
@@ -76,6 +87,10 @@ export default {
         }
     },
     methods: {
+        getDatetime(choosenDate) {
+            let date = new Date(choosenDate);
+            return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
+        },
         hasSelectedProject() {
             return this.project !== null;
         },

@@ -66,12 +66,20 @@
         </fieldset>
 
         <fieldset class="project-update-form__section" v-if="project.progress === 6 && $store.getters.isCadi">
-            {{ updatedProject.teacher }}
             <CustomSelect
                 class="project-update-form__field"
                 label="Professor responsável" 
                 v-model="selectedTeacher"
                 :options="getTeachersOptions()"
+            />
+        </fieldset>
+
+        <fieldset class="project-update-form__section" v-if="project.progress === 6 && $store.getters.isTeacher">
+            <CustomSelect
+                class="project-update-form__field"
+                label="Aluno responsável" 
+                v-model="selectedStudent"
+                :options="getStudentsOptions()"
             />
         </fieldset>
 
@@ -111,6 +119,10 @@ export default {
         UserService
             .getTeacherUsers()
             .then(teachers => this.teachers = teachers);
+
+        UserService
+            .getStudentsUsers()
+            .then(students => this.students = students);
     },
     computed: {
         updatedProject() {
@@ -134,12 +146,18 @@ export default {
             else if (this.$store.getters.isCadi && this.project.progress === 6) {
                 return 'Escolha um professor cadastrado para ser o responsável por este projeto:';
             }
+            else if (this.$store.getters.isTeacher && this.project.progress === 6) {
+                return 'Escolha um aluno responsável para o projeto:';
+            }
         },
         getMeetingOptions() {
             return this.updatedProject.meeting.possibleDate.map(option => option.dateTime);
         },
         getTeachersOptions() {
             return [null, ...this.teachers.map(teacher => teacher.name)];
+        },
+        getStudentsOptions() {
+            return [null, ...this.students.map(student => student.name)];
         },
         isToApproveOrDeny() {
             return this.$store.getters.isCadi && [2, 4].includes(this.project.progress);
@@ -149,7 +167,7 @@ export default {
             return {
                 3: this.$store.getters.isRepresentative && project.completeDescription && project.technologyDescription,
                 5: (this.$store.getters.isRepresentative && project.meeting.choosenDate) || (this.$store.getters.isCadi && project.meeting.possibleDate && project.meeting.possibleDate.length && project.meeting.address),
-                6: (this.$store.getters.isCadi && this.selectedTeacher),
+                6: (this.$store.getters.isCadi && this.selectedTeacher) || (this.$store.getters.isTeacher && this.selectedStudent),
             }[project.progress];
         },
         addPossibleDate() {
@@ -166,7 +184,13 @@ export default {
             this.newPossibleDate = '';
         },
         submit(approved) {
-            this.updatedProject.teacher = this.teachers.filter(teacher => teacher.name === this.selectedTeacher)[0].id;
+            if (this.$store.getters.isCadi) {
+                this.updatedProject.teacher = this.teachers.filter(teacher => teacher.name === this.selectedTeacher)[0].id;
+            }
+            else if (this.$store.getters.isTeacher) {
+                this.updatedProject.studentResponsible = this.students.filter(student => student.name === this.selectedStudent)[0].id;
+                this.updatedProject.students.push(this.updatedProject.studentResponsible);
+            }
             ProjectService.updateProject(this.updatedProject, approved).then(() => {
                 this.updated = true;
                 setTimeout(() => this.updated = false, 5000);
@@ -178,7 +202,9 @@ export default {
             newPossibleDate: '',
             updated: false,
             teachers: [],
-            selectedTeacher: null
+            students: [],
+            selectedTeacher: null,
+            selectedStudent: null
         };
     }
 }

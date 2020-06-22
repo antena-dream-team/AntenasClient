@@ -102,6 +102,7 @@ export default {
             let user = users.filter(user => user.token === store.state.token)[0];
             
             resolve({
+                id: user.id,
                 name: user.name,
                 email: user.email,
                 token: user.token,
@@ -113,6 +114,12 @@ export default {
     getTeacherUsers() {
         return new Promise(resolve => {
             resolve(users.filter(user => user.role === 'TEACHER'));
+        })
+    },
+
+    getStudentsUsers() {
+        return new Promise(resolve => {
+            resolve(users.filter(user => user.role === 'STUDENT'));
         })
     }
 };

@@ -17,8 +17,8 @@ export const getProjectStatus = project => {
     else if (store.getters.isCadi) {
         isWaiting = [2, 4].includes(project.progress) || (isMeetingPhase && !project.meeting.choosenDate) || (isDeliveryPhase && !project.teacher);
     }
-    else if (store.getters.isCadi) {
-        isWaiting = isDeliveryPhase && (!project.students.length || !project.studentResponsible);
+    else if (store.getters.isTeacher) {
+        isWaiting = isDeliveryPhase && !project.studentResponsible;
     }
     else if (store.getters.isStudent && project.studentResponsible === store.state.user.id) {
         isWaiting = isDeliveryPhase && !project.deliver.some(entrega => entrega.studentResponsible === project.studentResponsible);
