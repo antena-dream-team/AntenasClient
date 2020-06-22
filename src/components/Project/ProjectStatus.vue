@@ -23,6 +23,7 @@
 
 <script>
 import Timeline from '@/components/Timeline.vue';
+import EventBus from '@/helpers/EventBus.js'
 
 export default {
     props: {

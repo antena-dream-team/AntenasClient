@@ -1,91 +1,6 @@
 import http from '../helpers/Http'
 import store from '../store/index'
-
-let projects = [
-    {
-        id: 1,
-        title: 'Patinete voador',
-        short_description: 'Pensa num patinete que voa. É isto.',
-        notes: 'Vai ser bem massa',
-        lastUpdate: new Date().getTime(),
-        progress: 2
-    },
-    {
-        id: 2,
-        title: 'Patins voador',
-        short_description: 'É praticamente um jetpack pro seu pé.',
-        complete_description: '',
-        technology_description: '',
-        notes: '',
-        lastUpdate: new Date().getTime(),
-        progress: 3    
-    },
-    {
-        id: 3,
-        title: 'Skate voador',
-        short_description: 'É um skate que voa parça, top demais.',
-        complete_description: 'Tipo um hoverboard, Back to the future stuff',
-        notes: 'https://www.youtube.com/watch?v=TkyLnWm1iCs',
-        lastUpdate: new Date().getTime(),
-        progress: 4    
-    },
-    {
-        id: 4,
-        title: 'Carro voador',
-        short_description: 'Um carro eletrico movido a gasolina renovavel a base de vento e cenoura',
-        complete_description: 'Um carro eletrico movido a gasolina renovavel a base de vento e cenoura. Um carro eletrico movido a gasolina renovavel a base de vento e cenoura Um carro eletrico movido a gasolina renovavel a base de vento e cenoura Um carro eletrico movido a gasolina renovavel a base de vento e cenoura',
-        technology_description: 'Um carro feito em react com graxa em pó.',
-        lastUpdate: new Date().getTime(),
-        progress: 5,
-        meeting: null    
-    },
-    {
-        id: 5,
-        title: 'Bicicleta voadora',
-        short_description: 'Uma bicicleta movida a gasolina renovavel a base de vento e cenoura',
-        complete_description: 'Uma bicicleta movida a gasolina renovavel a base de vento e cenoura. Um carro eletrico movido a gasolina renovavel a base de vento e cenoura Um carro eletrico movido a gasolina renovavel a base de vento e cenoura Um carro eletrico movido a gasolina renovavel a base de vento e cenoura',
-        technology_description: 'Uma bicicleta feita em react com graxa em pó.',
-        lastUpdate: new Date().getTime(),
-        progress: 5,
-        meeting: {
-            id: 1,
-            choosenDate: undefined,
-            address: 'Rua José Cobra, 360',
-            possibleDate: [
-                { dateTime: '2020-07-03T00:00:00.000+0000' },
-                { dateTime: '2020-06-03T00:00:00.000+0000' },
-                { dateTime: '2020-05-03T00:00:00.000+0000' },
-            ]
-        }    
-    },
-    {
-        id: 6,
-        title: 'Mochila voadora',
-        short_description: 'Uma mochila que voa',
-        complete_description: 'Basicamente um jetpack',
-        technology_description: 'Poeira intergalática',
-        lastUpdate: new Date().getTime(),
-        progress: 6,
-        meeting: {
-            id: 1,
-            choosenDate: '2020-07-03T00:00:00.000+0000',
-            address: 'Rua José Cobra, 360',
-            possibleDate: [
-                { dateTime: '2020-07-03T00:00:00.000+0000' },
-                { dateTime: '2020-06-03T00:00:00.000+0000' },
-                { dateTime: '2020-05-03T00:00:00.000+0000' },
-            ]
-        }
-    },
-    {
-        id: 7,
-        progress: 2,
-        title: 'Avião voador',
-        short_description: 'Avião de papel que voa pra caralho no ar e na terra',
-        lastUpdate: new Date().getTime(),
-        refused: true
-    }
-];
+import projects from './Mocks.js'
 
 export default {
 
@@ -95,7 +10,14 @@ export default {
                 .then(res => res.data);
         */
         return new Promise(resolve => {
-            resolve(projects);
+            resolve(projects.filter(project => {
+                const userId = store.state.user.id;
+
+                return (store.getters.isRepresentative && project.entrepreneur === userId) ||
+                    store.getters.isCadi ||
+                    (store.getters.isTeacher && project.teacher === userId) ||
+                    (store.getters.isStudent && (studentResponsible === userId || project.students.some(student => student.id === userId)));
+            }));
         });
     },
 
@@ -105,30 +27,61 @@ export default {
                 id: (Math.random() * 100) + 3,
                 lastUpdate: new Date().getTime(),
                 progress: 2,
+                entrepreneur: store.state.user.id,
+                refused: false,
+                address: {
+                    place: '',
+                    number: '',
+                    street: '',
+                    neighborhood: '',
+                    city: '',
+                    zip: ''
+                },
+                meeting: {
+                    chosenDate: null,
+                    possibleDate: [],
+                },
+                teacher: null,
+                students: [],
+                deliver: [],
+                studentResponsible: null,
                 ...project
             };
 
             projects.push(project);
+            store.commit('ADD_PROJECTS', [project]);
             resolve(project);
         });
     },
 
-    updateProject(project) {
+    updateProject(project, approved) {
         return new Promise(resolve => {
-            projects.some((curProject, index) => {
-                if (curProject.id === project.id) {
 
-                    if (project.progress === 3) {
+            for (let index = 0; index < projects.length; index++) {
+                
+                if (projects[index].id === project.id) {
+    
+                    if (store.getters.isCadi && [2, 4].includes(project.progress)) {
+                        project.refused = !approved;
+    
+                        if (approved) {
+                            project.progress = project.progress + 1;
+                        }
+                        else {
+                            store.commit('DESELECT_PROJECT');
+                        }
+                    }
+    
+                    if (store.getters.isRepresentative && project.progress === 3) {
                         project.progress = 4;
                     }
-
-                    console.log(project)
-
+    
                     projects[index] = project;
-                    return true;
+                    break;
                 }
-            });
-
+            }
+            
+            store.commit('UPDATE_PROJECT', project);
             resolve(project);
         });
     }

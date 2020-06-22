@@ -11,25 +11,25 @@
                 <ProjectStatus class="project-view__phase" :project="project" />
                 
                 <ProjectUpdateForm 
-                    v-if="$utils.getProjectStatus(project) === 'WAITING'"
+                    v-if="projectStatus === 'WAITING' && !project.refused"
                     :project="project"
                     class="project-view__form" 
                 />
                 
                 <div class="project-view__info">
-                    <div class="project-view__field" v-if="project.short_description">
+                    <div class="project-view__field" v-if="project.shortDescription">
                         <p class="label">Descrição breve:</p>
-                        <p class="text">{{ project.short_description }}</p>
+                        <p class="text">{{ project.shortDescription }}</p>
                     </div>
                     
-                    <div class="project-view__field" v-if="project.complete_description">
+                    <div class="project-view__field" v-if="project.completeDescription">
                         <p class="label">Descrição completa:</p>
-                        <p class="text">{{ project.complete_description }}</p>
+                        <p class="text">{{ project.completeDescription }}</p>
                     </div>
                     
-                    <div class="project-view__field" v-if="project.technology_description">
+                    <div class="project-view__field" v-if="project.technologyDescription">
                         <p class="label">Descrição da tecnologia:</p>
-                        <p class="text">{{ project.technology_description }}</p>
+                        <p class="text">{{ project.technologyDescription }}</p>
                     </div>
 
                     <div class="project-view__field" v-if="project.notes">
@@ -55,26 +55,32 @@
 </template>
 
 <script>
+import EventBus from '@/helpers/EventBus.js'
 import CustomButton from '@/components/Forms/CustomButton.vue'
 import ProjectStatus from '@/components/Project/ProjectStatus.vue'
 import ProjectUpdateForm from '@/components/Project/ProjectUpdateForm.vue'
 
 export default {
     name: 'ProjectView',
-    props: {
-        project: Object
-    },
 	components: {
         CustomButton,
         ProjectStatus,
         ProjectUpdateForm,
     },
+    computed: {
+        projectStatus() {
+            return this.$utils.getProjectStatus(this.project);
+        },
+        project() {
+            return this.$store.state.selectedProject;
+        }
+    },
     methods: {
         hasSelectedProject() {
-            return !!Object.keys(this.project).length;
+            return this.project !== null;
         },
         closeProject() {
-            this.$emit('close');
+            this.$store.commit('DESELECT_PROJECT');
         },
         createProject() {
             this.$emit('create');

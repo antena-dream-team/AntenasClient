@@ -3,7 +3,7 @@
         <div class="box__header">
             <h4 class="title">Meus projetos</h4>
             <div class="actions">
-                <CustomButton class="button" @click="createProject()">
+                <CustomButton class="button" v-if="$store.getters.isRepresentative" @click="createProject()">
                     Criar
                 </CustomButton>
             </div>
@@ -12,16 +12,16 @@
             <li class="projects__item" v-for="project in projects" :key="project.id">
                 <a 
                     href
-                    @click.prevent="selectProject(project)" 
+                    @click.prevent="selectProject(project.id)" 
                     class="projects__item-content"
-                    :class="`projects__item-content--${$utils.getProjectStatus(project).toLowerCase()}`"
-                    :title="project.short_description"
+                    :class="`projects__item-content--${getProjectStatus(project)}`"
+                    :title="project.shortDescription"
                 >
                     <div class="status"></div>
                     <div class="content">
                         <span class="title">{{ project.title }}</span>
                         <p class="description">
-                            {{ project.short_description }}
+                            {{ project.shortDescription }}
                         </p>
                         <div class="updated">
                             <span>Atualizado em:</span>
@@ -45,18 +45,9 @@ export default {
         CustomButton
     },
     mounted() {
-        EventBus.$on('UPDATE-PROJECT', updatedProject => {
-            this.projects.some((project, index) => {
-                if (updatedProject.id === project.id) {
-                    this.projects[index] = updatedProject;
-                    return true;
-                }
-            });
+        EventBus.$on('PROJECT-UPDATED', () => {
+            this.$forceUpdate();
         });
-
-        ProjectService
-            .getProjects()
-            .then(projects => this.projects = projects);
     },
     methods: {
         addZero(number) {
@@ -76,17 +67,23 @@ export default {
 
             return `${this.addZero(day)}/${this.addZero(month)}/${year}`;
         },
-        selectProject(project) {
-            this.$emit('select', project);
+        selectProject(projectId) {
+            this.$store.commit('SELECT_PROJECT', projectId);
         },
         createProject() {
             this.$emit('create');
+        },
+        getProjectStatus(project) {
+            return this.$utils.getProjectStatus(project).toLowerCase();
+        }
+    },
+    computed: {
+        projects() {
+            return this.$store.state.projects;
         }
     },
 	data() {
-		return {
-            projects: []
-		};
+		return {};
 	}
 }
 </script>

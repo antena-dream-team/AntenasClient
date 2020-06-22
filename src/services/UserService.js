@@ -108,5 +108,11 @@ export default {
                 role: user.role
             });
         });
+    },
+
+    getTeacherUsers() {
+        return new Promise(resolve => {
+            resolve(users.filter(user => user.role === 'TEACHER'));
+        })
     }
 };

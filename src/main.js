@@ -21,7 +21,7 @@ Vue.use({
 Vue.config.productionTip = false;
 
 if (store.getters.isLoggedIn) {
-  	store.dispatch('loadCurrentUserInfo');
+  	store.dispatch('loadCurrentUserInfo').then(() => store.dispatch('loadProjects'));
 }
 
 new Vue({

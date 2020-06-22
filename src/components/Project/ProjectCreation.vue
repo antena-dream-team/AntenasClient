@@ -17,7 +17,7 @@
                     <CustomInput
                         class="project-creation__field"
                         label="Descrição curta:"
-                        v-model="project.short_description"
+                        v-model="project.shortDescription"
                     />
                     <CustomTextarea
                         class="project-creation__field"
@@ -50,7 +50,7 @@ export default {
     },
     methods: {
         isValid() {
-            return this.project.title && this.project.short_description;
+            return this.project.title && this.project.shortDescription;
         },
         closeCreation() {
             this.$emit('close');
@@ -59,8 +59,9 @@ export default {
             ProjectService
                 .addProject(this.project)
                 .then(project => {
-                    this.closeCreation();
                     this.$emit('created', project);
+                    this.closeCreation();
+                    this.$store.commit('SELECT_PROJECT', project.id);
                 });
         }
     },
@@ -68,7 +69,7 @@ export default {
 		return {
             project: {
                 title: '',
-                short_description: '',
+                shortDescription: '',
                 notes: ''
             }
         };

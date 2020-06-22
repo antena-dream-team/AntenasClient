@@ -3,23 +3,19 @@
     <Toolbar />
     <div class="home__wrapper">
       <Projects 
-        class="home__projects" 
-        @select="selectProject"
+        class="home__projects"
         @create="createProject"
       />
       
       <ProjectView
         v-if="!creating"
-        class="home__project-view" 
-        :project="selectedProject"
+        class="home__project-view"
         @create="createProject"
-        @close="deselectProject"
       />
       
       <ProjectCreation 
         v-if="creating"
         class="home__project-view" 
-        @created="selectProject"
         @close="stopCreation" 
       />
     </div>
@@ -31,6 +27,7 @@ import Toolbar from '@/components/Toolbar/Toolbar.vue'
 import Projects from '@/components/Project/Projects.vue'
 import ProjectView from '@/components/Project/ProjectView.vue'
 import ProjectCreation from '@/components/Project/ProjectCreation.vue'
+import EventBus from '@/helpers/EventBus.js'
 
 export default {
   name: 'Home',
@@ -41,10 +38,6 @@ export default {
     ProjectCreation
   },
   methods: {
-    selectProject(project) {
-      this.creating = false;
-      this.selectedProject = project;
-    },
     deselectProject() {
       this.selectedProject = {};
     },
@@ -54,7 +47,6 @@ export default {
     },
     stopCreation() {
       this.creating = false;
-      this.deselectProject();
     }
   },
   data() {

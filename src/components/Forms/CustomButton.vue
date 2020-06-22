@@ -45,5 +45,10 @@ export default {
             background-color: white;
             color: $color-blue;
         }
+
+        &--red {
+            background-color: $color-red;
+            color: white;
+        }
     }
 </style>
