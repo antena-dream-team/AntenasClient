@@ -5,7 +5,7 @@
 ## Rodando o projeto
 
 ### Pré-requisitos
-- [NodeJs](https://nodejs.org/en/download/)
+- [NodeJs 12.16.3 (Versão recomendada)](https://nodejs.org/en/download/)
 
 ### Instalando dependências do projeto
 1. Abra o seu terminal
