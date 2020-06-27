@@ -151,13 +151,13 @@ export default {
             }
         },
         getMeetingOptions() {
-            return this.updatedProject.meeting.possibleDate.map(option => option.dateTime);
+            return this.updatedProject.meeting.possibleDate.map(option => ({ value: option.dateTime }));
         },
         getTeachersOptions() {
-            return [null, ...this.teachers.map(teacher => teacher.name)];
+            return [null, ...this.teachers.map(teacher => ({ value: teacher.name }))];
         },
         getStudentsOptions() {
-            return [null, ...this.students.map(student => student.name)];
+            return [null, ...this.students.map(student => ({ value: student.name }))];
         },
         isToApproveOrDeny() {
             return this.$store.getters.isCadi && [2, 4].includes(this.project.progress);

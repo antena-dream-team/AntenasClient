@@ -10,9 +10,9 @@
             <option 
                 v-for="(option, index) in options" 
                 :key="`option-${index}`" 
-                :value="option">
+                :value="option.value">
 
-                {{ option }}
+                {{ option.label || option.value }}
             </option>
         </select>
     </div>

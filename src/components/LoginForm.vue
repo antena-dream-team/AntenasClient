@@ -24,7 +24,7 @@
         <div class="login-form__field" v-if="signUp">
             <CustomSelect 
                 v-model="role"
-                :options="roles" 
+                :options="roles"
                 id="role" 
                 label="Cargo"/>
         </div>
@@ -62,10 +62,10 @@ export default {
             password: '',
             role: '',
             roles: [
-                'Aluno',
-                'Professor',
-                'Representante',
-                'CADI',
+                { value: 'STUDENT', label: 'Aluno'},
+                { value: 'TEACHER', label: 'Professor'},
+                { value: 'REPRESENTATIVE', label: 'Representante'},
+                { value: 'CADI', label: 'CADI'},
             ]
         };
     },

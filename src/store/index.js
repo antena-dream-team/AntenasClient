@@ -57,10 +57,8 @@ const actions = {
 	loadCurrentUserInfo({ commit, state }) {
 		return new Promise((resolve, reject) => {
 
-			const token = state.token;
-
 			UserService
-				.getUserInfo(token)
+				.getUserInfo()
 				.then(user => {
 					commit('SET_CURRENT_USER', { token, user });
 					resolve();

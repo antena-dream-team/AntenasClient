@@ -1,76 +1,26 @@
 import http from '../helpers/Http'
 import store from '../store/index'
 
-let users = [
-    {
-        id: 1,
-        name: 'Fábio Lucas Romeiro de Castro',
-        email: 'flromeiroc@gmail.com',
-        password: '123456',
-        role: 'REPRESENTATIVE',
-        token: 'qweyu2u948jeisdj'
-    },
-    {
-        id: 2,
-        name: 'Danielly Garcia Jardim',
-        email: 'danny.jardim@gmail.com',
-        password: '123456',
-        role: 'CADI',
-        token: 'mfoeirut034985klfd'
-    },
-    {
-        id: 3,
-        name: 'Mateus Machado de Souza',
-        email: 'mm.souza@gmail.com',
-        password: '123456',
-        role: 'TEACHER',
-        token: 'assvwrwe4524rer23'
-    },
-    {
-        id: 4,
-        name: 'Thiago Diaz',
-        email: 'thiago.d@gmail.com',
-        password: '123456',
-        role: 'STUDENT',
-        token: 'oqiwjenqpkodm823'
-    },
-    {
-        id: 5,
-        name: 'Giovanna Xavier',
-        email: 'gio.x@gmail.com',
-        password: '123456',
-        role: 'STUDENT',
-        token: 'dadaojwoeqw82031'
-    }
-];
+const routeMap = {
+    'STUDENT': '/student',
+    'CADI': '/cadi',
+    'REPRESENTATIVE': '/entrepreneur',
+    'TEACHER': '/teacher'
+};
 
 export default {
 
     authenticateUser({ email, password }) {
-        /*
         return http
             .post('/login', { email, password })
             .then(res => {
+                localStorage.setItem('USER_ID', res.id);
+                localStorage.setItem('USER_ROLE', res.authorizations[0].name);
                 store.commit('SET_CURRENT_USER', {
-                    token: res.data.access_token,
+                    token: res.data.token,
                     user: res.data.user
                 });
             });
-        */
-        return new Promise((resolve, reject) => {
-            let currentUser = users.filter(user => user.email === email && user.password === password)[0];
-
-            if (currentUser) {
-                store.commit('SET_CURRENT_USER', {
-                    token: currentUser.token,
-                    user: currentUser
-                });
-                resolve();
-            }
-            else {
-                reject();
-            }
-        });
     },
 
     registUser({ name, email, password, role }) {
@@ -78,48 +28,64 @@ export default {
             name, 
             email, 
             password, 
-            role, 
-            token: 'aoeuidhnqowdnasl231',
-            id: 76
+            role
         };
-
-        /*
-        return http.post('/signup', user);
-        */
-
-        return new Promise(resolve => {
-            users.push(user);
-            resolve();
-        });
+        
+        return http.post(routeMap[role], user);
     },
 
     getUserInfo() {
-        /*
-        return http.get('/user')
-            .then(res => res.data);
-        */
-        return new Promise(resolve => {
-            let user = users.filter(user => user.token === store.state.token)[0];
-            
-            resolve({
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                token: user.token,
-                role: user.role
+        const userId = localStorage.getItem('USER_ID');
+        const userRole = localStorage.getItem('USER_ROLE');
+        const token = localStorage.getItem('token');
+
+        return http
+            .get(`${routeMap[userRole]}/${userId}`)
+            .then(res => {
+
+                const user = res.data;
+
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    token: token,
+                    role: userRole
+                };
             });
-        });
     },
 
     getTeacherUsers() {
-        return new Promise(resolve => {
-            resolve(users.filter(user => user.role === 'TEACHER'));
-        })
+
+        return http
+            .get(`${routeMap[userRole]}`)
+            .then(res => {
+
+                const teachers = res.data;
+
+                return teachers.map(teacher => ({
+                    id: teacher.id,
+                    email: teacher.email,
+                    name: teacher.name,
+                    role: teacher.authorizations[0].name
+                }));
+            });
     },
 
     getStudentsUsers() {
-        return new Promise(resolve => {
-            resolve(users.filter(user => user.role === 'STUDENT'));
-        })
+
+        return http
+            .get(`${routeMap[userRole]}`)
+            .then(res => {
+
+                const students = res.data;
+
+                return students.map(teacher => ({
+                    id: teacher.id,
+                    email: teacher.email,
+                    name: teacher.name,
+                    role: teacher.authorizations[0].name
+                }));
+            });
     }
 };
