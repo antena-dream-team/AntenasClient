@@ -6,24 +6,24 @@ orbs:
 
 jobs:
   install_dependeces:
-    executor:
-      name: node/default
+    machine:
+      image: ubuntu-1604:201903-01
+
     steps:
       - checkout
       - run:
           name: Installing dependences
           command: |
             npm install
-
   build:
-      executor:
-        name: node/default
-      steps:
-        - checkout
-        - run: 
-            name: Building project
-            command: |
-              npm run build
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - run: 
+          name: Building project
+          command: |
+            npm run build
 
   sync_s3:
     docker:
@@ -37,6 +37,8 @@ jobs:
           to: 's3://antenasclient/'
 
   invalidate_cloudfront_distribution:
+    machine:
+      image: ubuntu-1604:201903-01
     steps:
       - checkout
       - run:
@@ -54,7 +56,6 @@ workflows:
               branches:
                 only:
                   - master
-            message: "Instalando dependencias"
 
             
         - build:
