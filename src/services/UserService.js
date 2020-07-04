@@ -14,11 +14,16 @@ export default {
         return http
             .post('/login', { email, password })
             .then(res => {
-                localStorage.setItem('USER_ID', res.id);
-                localStorage.setItem('USER_ROLE', res.authorizations[0].name);
+                localStorage.setItem('USER_ID', res.data.id);
+                localStorage.setItem('USER_ROLE', res.data.authorizations[0].name);
                 store.commit('SET_CURRENT_USER', {
                     token: res.data.token,
-                    user: res.data.user
+                    user: {
+                        name: res.data.name,
+                        role: res.data.authorizations[0].name,
+                        email: res.data.email,
+                        id: res.data.id
+                    }
                 });
             });
     },

@@ -60,7 +60,7 @@ const actions = {
 			UserService
 				.getUserInfo()
 				.then(user => {
-					commit('SET_CURRENT_USER', { token, user });
+					commit('SET_CURRENT_USER', { token: user.token, user });
 					resolve();
 				})
 				.catch(err => {
