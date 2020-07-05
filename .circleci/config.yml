@@ -7,7 +7,7 @@ orbs:
 jobs:
   build:
     docker:
-      image: node/12.18.2-stretch
+      - image: node/12.18.2-stretch
     steps:
       - checkout
       - run:
