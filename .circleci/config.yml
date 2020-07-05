@@ -5,21 +5,15 @@ orbs:
     aws-s3: circleci/aws-s3@1.0.15
 
 jobs:
-  install_dependeces:
+  build:
     machine:
       image: ubuntu-1604:201903-01
-
     steps:
       - checkout
       - run:
           name: Installing dependences
           command: |
             npm install
-  build:
-    machine:
-      image: ubuntu-1604:201903-01
-    steps:
-      - checkout
       - run: 
           name: Building project
           command: |
