@@ -37,6 +37,11 @@ export default {
     ProjectView,
     ProjectCreation
   },
+  mounted() {
+    if (this.$store.getters.isLoggedIn) {
+      this.$store.dispatch('loadCurrentUserInfo').then(() => this.$store.dispatch('loadProjects'));
+    }
+  },
   methods: {
     deselectProject() {
       this.selectedProject = {};

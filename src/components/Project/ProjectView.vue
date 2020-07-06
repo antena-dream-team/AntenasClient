@@ -40,10 +40,26 @@
                     <div class="project-view__field" v-if="project.meeting.chosenDate">
                         <p class="label">Reunião de projeto:</p>
                         <p class="text">
-                            Local: {{ project.meeting.address.street }}, {{ project.meeting.address.number }} - {{ project.meeting.address.neighborhood }} - {{ project.meeting.address.city }}
+                            <strong>Local:</strong> {{ project.meeting.address.street }}, {{ project.meeting.address.number }} - {{ project.meeting.address.neighborhood }} - {{ project.meeting.address.city }}
                         </p>
                         <p class="text">
-                            Data e horario: {{ getDatetime(project.meeting.chosenDate) }}
+                            <strong>Data e horario:</strong> {{ getDatetime(project.meeting.chosenDate) }}
+                        </p>
+                    </div>
+
+                    <div class="project-view__field" v-if="$store.getters.isStudent && getStudentDeliver()">
+                        <p class="label">Sua entrega:</p>
+                        <p class="text">
+                            <strong>Link do projeto:</strong> {{ getStudentDeliver().link }}
+                        </p>
+                        <p class="text" v-if="getStudentDeliver().comment">
+                            <strong>Comentarios:</strong> {{ getStudentDeliver().comment }}
+                        </p>
+                    </div>
+                    <div class="project-view__field" v-else>
+                        <p class="label">Entregas:</p>
+                        <p class="text" v-for="deliver in project.deliver" :key="deliver.link">
+                            <a :href="deliver.link" target="_blank">{{ deliver.link }}</a>
                         </p>
                     </div>
                 </div>
@@ -87,8 +103,11 @@ export default {
         }
     },
     methods: {
-        getDatetime(choosenDate) {
-            let date = new Date(choosenDate);
+        getStudentDeliver() {
+            return this.project.deliver.filter(d => d.students.includes(this.$store.state.user.id))[0];
+        },
+        getDatetime(chosenDate) {
+            let date = new Date(chosenDate);
             return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
         },
         hasSelectedProject() {

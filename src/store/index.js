@@ -77,7 +77,7 @@ const actions = {
 			ProjectService
 				.getProjects()
 				.then(projects => {
-					commit('ADD_PROJECTS', projects);
+					state.projects = projects;
 					resolve();
 				})
 				.catch(err => {

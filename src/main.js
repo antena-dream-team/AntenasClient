@@ -20,8 +20,12 @@ Vue.use({
 
 Vue.config.productionTip = false;
 
-if (store.getters.isLoggedIn) {
-  	store.dispatch('loadCurrentUserInfo').then(() => store.dispatch('loadProjects'));
+if (!localStorage.getItem('projects')) {
+	localStorage.setItem('projects', JSON.stringify([]));
+}
+
+if (!localStorage.getItem('users')) {
+	localStorage.setItem('users', JSON.stringify([]));
 }
 
 new Vue({

@@ -39,6 +39,7 @@ export default {
         &:disabled {
             box-shadow: none;
             background-color: $color-gray;
+            cursor: default;
         }
 
         &--white {
