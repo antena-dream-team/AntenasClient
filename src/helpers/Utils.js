@@ -7,7 +7,8 @@ export const getProjectStatus = project => {
     let isRefused = project.refused;
     let isDeliveryPhase = project.progress === 6;
 
-    let isConcluded = !store.getters.isTeacher && isDeliveryPhase && project.teacher && project.studentResponsible && project.deliver.length;
+    let isConcluded = (store.getters.isStudent && project.deliver.some(deliver => deliver.students.includes(store.state.user.id))) || 
+        (!store.getters.isTeacher && isDeliveryPhase && project.teacher && project.studentResponsible && project.deliver.length);
 
     let isWaiting;
 
