@@ -87,8 +87,8 @@ export default {
         }
     },
     methods: {
-        getDatetime(choosenDate) {
-            let date = new Date(choosenDate);
+        getDatetime(chosenDate) {
+            let date = new Date(chosenDate);
             return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
         },
         hasSelectedProject() {

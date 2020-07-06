@@ -5,52 +5,53 @@ import projects from './Mocks.js'
 export default {
 
     getProjects() {
-        /* return http
-                .get('/projects')
-                .then(res => res.data);
-        */
-        return new Promise(resolve => {
-            resolve(projects.filter(project => {
-                const userId = store.state.user.id;
+        return http
+            .get('/project/' + store.state.user.id)
+            .then(res => {
+                let projects = res.data
 
-                return (store.getters.isRepresentative && project.entrepreneur === userId) ||
-                    store.getters.isCadi ||
-                    (store.getters.isTeacher && project.teacher === userId) ||
-                    (store.getters.isStudent && (studentResponsible === userId || project.students.some(student => student.id === userId)));
-            }));
-        });
+                let defaulProject = {
+                    meeting: {
+                        address: {
+                            place: '',
+                            number: '',
+                            street: '',
+                            neighborhood: '',
+                            city: '',
+                            zip: ''
+                        },
+                        chosenDate: null,
+                        possibleDate: [],
+                    },
+                    students: [],
+                    deliver: []
+                }
+
+                projects.forEach(project => {
+                    if (project.meeting == null) {
+                        project.meeting = defaulProject.meeting;
+                    }
+    
+                    if (project.students == null) {
+                        project.students = defaulProject.students;
+                    }
+    
+                    if (project.deliver == null) {
+                        project.deliver = defaulProject.deliver;
+                    }
+                });
+                
+                
+
+                return projects;
+            });
+        
     },
 
     addProject(project) {
-        return new Promise(resolve => {
-            project = {
-                id: (Math.random() * 100) + 3,
-                lastUpdate: new Date().getTime(),
-                progress: 2,
-                entrepreneur: store.state.user.id,
-                refused: false,
-                address: {
-                    place: '',
-                    number: '',
-                    street: '',
-                    neighborhood: '',
-                    city: '',
-                    zip: ''
-                },
-                meeting: {
-                    chosenDate: null,
-                    possibleDate: [],
-                },
-                teacher: null,
-                students: [],
-                deliver: [],
-                studentResponsible: null,
-                ...project
-            };
-
-            projects.push(project);
-            store.commit('ADD_PROJECTS', [project]);
-            resolve(project);
+        return http.post('/project', project).then(res => {
+            store.commit('ADD_PROJECTS', [res.data]);
+            return res.data;
         });
     },
 
@@ -81,7 +82,7 @@ export default {
                 }
             }
             
-            store.commit('UPDATE_PROJECT', project);
+            http.post("/project/update", project);
             resolve(project);
         });
     }

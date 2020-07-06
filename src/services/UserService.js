@@ -63,7 +63,7 @@ export default {
     getTeacherUsers() {
 
         return http
-            .get(`${routeMap[userRole]}`)
+            .get('/teacher')
             .then(res => {
 
                 const teachers = res.data;
@@ -72,7 +72,7 @@ export default {
                     id: teacher.id,
                     email: teacher.email,
                     name: teacher.name,
-                    role: teacher.authorizations[0].name
+                    authorizations: teacher.authorizations[0].name
                 }));
             });
     },
@@ -80,7 +80,7 @@ export default {
     getStudentsUsers() {
 
         return http
-            .get(`${routeMap[userRole]}`)
+            .get('/student')
             .then(res => {
 
                 const students = res.data;

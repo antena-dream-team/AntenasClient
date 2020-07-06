@@ -25,7 +25,7 @@
                         </p>
                         <div class="updated">
                             <span>Atualizado em:</span>
-                            <strong>{{ formatDate(project.lastUpdate) }}</strong>
+                            <strong>{{ formatDate(project.createdAt) }}</strong>
                         </div>
                     </div>
                 </a>

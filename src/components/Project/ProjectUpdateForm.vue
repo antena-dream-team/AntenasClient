@@ -17,7 +17,7 @@
             />
         </fieldset>
 
-        <fieldset class="project-update-form__section" v-if="updatedProject.progress === 5 && $store.getters.isCadi && !updatedProject.meeting.choosenDate">
+        <fieldset class="project-update-form__section" v-if="updatedProject.progress === 5 && $store.getters.isCadi && !updatedProject.meeting.chosenDate">
             <CustomInput
                 class="project-update-form__field"
                 label="Local da reunião - CEP" 
@@ -60,7 +60,7 @@
             <CustomSelect
                 class="project-update-form__field"
                 label="Data da reunião" 
-                v-model="updatedProject.meeting.choosenDate"
+                v-model="updatedProject.meeting.chosenDate"
                 :options="getMeetingOptions()"
             />
         </fieldset>
@@ -154,10 +154,10 @@ export default {
             return this.updatedProject.meeting.possibleDate.map(option => ({ value: option.dateTime }));
         },
         getTeachersOptions() {
-            return [null, ...this.teachers.map(teacher => ({ value: teacher.name }))];
+            return [{value: null}, ...this.teachers.map(teacher => ({ value: teacher.name }))];
         },
         getStudentsOptions() {
-            return [null, ...this.students.map(student => ({ value: student.name }))];
+            return [{value: null}, ...this.students.map(student => ({ value: student.name }))];
         },
         isToApproveOrDeny() {
             return this.$store.getters.isCadi && [2, 4].includes(this.project.progress);
@@ -166,7 +166,7 @@ export default {
             let project = this.updatedProject;
             return {
                 3: this.$store.getters.isRepresentative && project.completeDescription && project.technologyDescription,
-                5: (this.$store.getters.isRepresentative && project.meeting.choosenDate) || (this.$store.getters.isCadi && project.meeting.possibleDate && project.meeting.possibleDate.length && project.meeting.address),
+                5: (this.$store.getters.isRepresentative && project.meeting.chosenDate) || (this.$store.getters.isCadi && project.meeting.possibleDate && project.meeting.possibleDate.length && project.meeting.address),
                 6: (this.$store.getters.isCadi && this.selectedTeacher) || (this.$store.getters.isTeacher && this.selectedStudent),
             }[project.progress];
         },
@@ -184,12 +184,18 @@ export default {
             this.newPossibleDate = '';
         },
         submit(approved) {
-            if (this.$store.getters.isCadi) {
-                this.updatedProject.teacher = this.teachers.filter(teacher => teacher.name === this.selectedTeacher)[0].id;
+            if (this.$store.getters.isCadi && this.updatedProject.progress == 6) {
+                this.updatedProject.teacher = {
+                    id: this.teachers.filter(teacher => teacher.name === this.selectedTeacher)[0].id
+                }
             }
             else if (this.$store.getters.isTeacher) {
-                this.updatedProject.studentResponsible = this.students.filter(student => student.name === this.selectedStudent)[0].id;
-                this.updatedProject.students.push(this.updatedProject.studentResponsible);
+                this.updatedProject.studentResponsible = {
+                        id: this.students.filter(student => student.name === this.selectedStudent)[0].id
+                    }
+                // this.updatedProject.students.push({
+                //         id: this.updatedProject.studentResponsible
+                //     });
             }
             ProjectService.updateProject(this.updatedProject, approved).then(() => {
                 this.updated = true;
