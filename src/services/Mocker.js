@@ -41,10 +41,10 @@ export default {
 
         return projects.filter(project => {
 
-            return (store.getters.isRepresentative && project.entrepreneur === userId) ||
+            return (store.getters.isRepresentative && project.entrepreneur == userId) ||
                 store.getters.isCadi ||
-                (store.getters.isTeacher && project.teacher === userId) ||
-                (store.getters.isStudent && (project.studentResponsible === userId || project.students.some(student => student === userId)));
+                (store.getters.isTeacher && project.teacher == userId) ||
+                (store.getters.isStudent && (project.studentResponsible == userId || project.students.some(student => student == userId)));
         });
     },
 

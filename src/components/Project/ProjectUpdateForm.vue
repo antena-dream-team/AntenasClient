@@ -228,11 +228,11 @@ export default {
         getMeetingOptions() {
             return this.updatedProject.meeting.possibleDate.map(option => ({ 
                 label: this.getFormatedDate(option.dateTime), 
-                value: this.option.dateTime 
+                value: option.dateTime 
             }));
         },
         getTeachersOptions() {
-            return [{ value: null }, ...this.teachers.map(teacher => ({ value: teacher.name }))];
+            return [{ value: null }, ...this.teachers.map(teacher => ({ label: teacher.name, value: teacher.id }))];
         },
         getStudentsOptions(inProjectOnly) {
             return [
@@ -262,10 +262,10 @@ export default {
         },
         submit(approved) {
             if (this.$store.getters.isCadi && this.updatedProject.progress == 6) {
-                this.updatedProject.teacher = this.teachers.filter(teacher => teacher.name === this.selectedTeacher)[0].id;
+                this.updatedProject.teacher = this.selectedTeacher;
             }
             else if (this.$store.getters.isTeacher) {
-                this.updatedProject.studentResponsible = this.students.filter(student => student.name === this.selectedStudent)[0].id;
+                this.updatedProject.studentResponsible = this.students.filter(student => student.id == this.selectedStudent)[0].id;
                 this.updatedProject.students.push(this.updatedProject.studentResponsible);
             }
 

@@ -40,7 +40,7 @@
                     <div class="project-view__field" v-if="project.meeting.chosenDate">
                         <p class="label">Reunião de projeto:</p>
                         <p class="text">
-                            <strong>Local:</strong> {{ project.meeting.address.street }}, {{ project.meeting.address.number }} - {{ project.meeting.address.neighborhood }} - {{ project.meeting.address.city }}
+                            <strong>Local:</strong> {{ project.meeting.address.street }}, {{ project.meeting.address.number }} - {{ project.meeting.address.city }}
                         </p>
                         <p class="text">
                             <strong>Data e horario:</strong> {{ getDatetime(project.meeting.chosenDate) }}
@@ -50,17 +50,31 @@
                     <div class="project-view__field" v-if="$store.getters.isStudent && getStudentDeliver()">
                         <p class="label">Sua entrega:</p>
                         <p class="text">
-                            <strong>Link do projeto:</strong> {{ getStudentDeliver().link }}
+                            <strong>Link do projeto:</strong> 
+                            <a :href="getStudentDeliver().link" target="_blank">{{ getStudentDeliver().link }}</a>
                         </p>
                         <p class="text" v-if="getStudentDeliver().comment">
                             <strong>Comentarios:</strong> {{ getStudentDeliver().comment }}
                         </p>
                     </div>
-                    <div class="project-view__field" v-else>
+                    <div class="project-view__field" v-else-if="project.deliver.length">
                         <p class="label">Entregas:</p>
-                        <p class="text" v-for="deliver in project.deliver" :key="deliver.link">
-                            <a :href="deliver.link" target="_blank">{{ deliver.link }}</a>
-                        </p>
+                        <ul class="project-view__deliver">
+                            <li class="project-view__deliver-item" v-for="deliver in project.deliver" :key="deliver.link">
+                                <p>
+                                    <strong>Link:</strong>
+                                    <a :href="deliver.link" target="_blank">{{ deliver.link }}</a>
+                                </p>    
+                                <p v-if="deliver.comment">
+                                    <strong>Comentarios:</strong>
+                                    <span>{{ deliver.comment }}</span>
+                                </p>    
+                                <p>
+                                    <strong>Membros:</strong>
+                                    <span>{{ getMembersList(deliver.students) }}</span>
+                                </p>    
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -86,6 +100,7 @@ import EventBus from '@/helpers/EventBus.js'
 import CustomButton from '@/components/Forms/CustomButton.vue'
 import ProjectStatus from '@/components/Project/ProjectStatus.vue'
 import ProjectUpdateForm from '@/components/Project/ProjectUpdateForm.vue'
+import UserService from '@/services/UserService.js';
 
 export default {
     name: 'ProjectView',
@@ -102,7 +117,15 @@ export default {
             return this.$store.state.selectedProject;
         }
     },
+    mounted() {
+        UserService
+            .getStudentsUsers()
+            .then(students => this.students = students);
+    },
     methods: {
+        getMembersList(ids) {
+            return ids.map(id => this.students.filter(student => student.id == id)[0].name).join(', ');
+        },
         getStudentDeliver() {
             return this.project.deliver.filter(d => d.students.includes(this.$store.state.user.id))[0];
         },
@@ -121,7 +144,9 @@ export default {
         }
     },
 	data() {
-		return { };
+		return {
+            students: []
+        };
 	}
 }
 </script>
@@ -206,6 +231,22 @@ export default {
 
     &__form {
         margin-bottom: spacing(2);
+    }
+
+    &__deliver-item {
+        margin-bottom: spacing(2);
+        line-height: 1.3em;
+        padding: spacing(1) 0;
+        border-bottom: solid 1px #ccc;
+
+        strong {
+            margin-right: spacing(1);
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+            border-bottom: 0;
+        }
     }
 }
 </style>
