@@ -5,25 +5,19 @@ orbs:
     aws-s3: circleci/aws-s3@1.0.15
 
 jobs:
-  install_dependeces:
-    executor:
-      name: node/default
+  build:
+    docker:
+      - image: node/12.18.2-stretch
     steps:
       - checkout
       - run:
           name: Installing dependences
           command: |
             npm install
-
-  build:
-      executor:
-        name: node/default
-      steps:
-        - checkout
-        - run: 
-            name: Building project
-            command: |
-              npm run build
+      - run: 
+          name: Building project
+          command: |
+            npm run build
 
   sync_s3:
     docker:
@@ -37,6 +31,8 @@ jobs:
           to: 's3://antenasclient/'
 
   invalidate_cloudfront_distribution:
+    machine:
+      image: ubuntu-1604:201903-01
     steps:
       - checkout
       - run:
@@ -48,19 +44,12 @@ workflows:
   version: 2
   build:
       jobs:
-        - install_dependeces:
+        - build:
             context: ANTENA
             filters:
               branches:
                 only:
                   - master
-            message: "Instalando dependencias"
-
-            
-        - build:
-            context: ANTENA
-            requires:
-              - install_dependeces
 
         - sync_s3:
             context: ANTENA
