@@ -2,32 +2,27 @@ import store from '../store/index'
 
 export const getProjectStatus = project => {
     let isMeetingPhase = project.progress === 5;
-    let hasMeeting;
-
-    if (project.hasMeeting == null) {
-        hasMeeting = false;
-    } else {
-        hasMeeting = project.meeting.chosenDate != null;
-    }
+    let hasMeeting = project.meeting.chosenDate != null;
     
     let isRefused = project.refused;
     let isDeliveryPhase = project.progress === 6;
 
-    let isConcluded = isDeliveryPhase && project.teacher && project.studentResponsible && project.deliver.length;
+    let isConcluded = (store.getters.isStudent && project.deliver.some(deliver => deliver.students.includes(store.state.user.id))) || 
+        (!store.getters.isTeacher && isDeliveryPhase && project.teacher && project.studentResponsible && project.deliver.length);
 
     let isWaiting;
 
     if (store.getters.isRepresentative) {
-        isWaiting = project.progress === 3 || (isMeetingPhase && !hasMeeting && project.meeting.possibleDate);
+        isWaiting = project.progress === 3 || (isMeetingPhase && !hasMeeting && project.meeting.possibleDate.length);
     }
     else if (store.getters.isCadi) {
         isWaiting = [2, 4].includes(project.progress) || (isMeetingPhase && !project.meeting.chosenDate) || (isDeliveryPhase && !project.teacher);
     }
     else if (store.getters.isTeacher) {
-        isWaiting = isDeliveryPhase && !project.studentResponsible;
+        isWaiting = !!isDeliveryPhase;
     }
-    else if (store.getters.isStudent && project.studentResponsible === store.state.user.id) {
-        isWaiting = isDeliveryPhase && !project.deliver.some(entrega => entrega.studentResponsible === project.studentResponsible);
+    else if (store.getters.isStudent) {
+        isWaiting = isDeliveryPhase && !project.deliver.some(entrega => entrega.students.includes(store.state.user.id));
     }
 
     if (isRefused) {

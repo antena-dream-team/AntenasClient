@@ -42,7 +42,8 @@
             <ul class="project-update-form__possible-dates" v-if="updatedProject.meeting.possibleDate.length">
                 <span class="title">Datas possíveis cadastradas:</span>
                 <li class="project-update-form__possible-date" v-for="possibleDate in updatedProject.meeting.possibleDate || []" :key="possibleDate.datetime">
-                    {{ possibleDate.dateTime }}
+                    <span>{{ getFormatedDate(possibleDate.dateTime) }}</span>
+                    <a @click.prevent="removePossibleDate(index)" href>Remover</a>
                 </li>
             </ul>
 
@@ -51,7 +52,7 @@
                 label="Data da reunião Ex: 20/05/2020 14:30"
                 v-model="newPossibleDate"
             />
-            <CustomButton type="button" @click="addPossibleDate()" class="form-button">
+            <CustomButton :disabled="!dateInputIsValid()" type="button" @click="addPossibleDate()" class="form-button">
                 Adicionar possível data
             </CustomButton>
         </fieldset>
@@ -60,7 +61,7 @@
             <CustomSelect
                 class="project-update-form__field"
                 label="Data da reunião" 
-                v-model="updatedProject.meeting.chosenDate"
+                v-model="chosenDate"
                 :options="getMeetingOptions()"
             />
         </fieldset>
@@ -75,16 +76,64 @@
         </fieldset>
 
         <fieldset class="project-update-form__section" v-if="project.progress === 6 && $store.getters.isTeacher">
+            <ul class="project-update-form__possible-dates" v-if="updatedProject.meeting.possibleDate.length">
+                <span class="title">Alunos inclusos:</span>
+                <li class="project-update-form__possible-date" v-for="(student, index) in updatedProject.students || []" :key="student">
+                    <span>{{ getStudentName(student) }}</span>
+                    <a @click.prevent="removeStudent(index)" href v-if="updatedProject.studentResponsible !== student">
+                        Remover
+                    </a>
+                    <span v-else>Representante</span>
+                </li>
+            </ul>
+
             <CustomSelect
                 class="project-update-form__field"
-                label="Aluno responsável" 
+                label="Selecionar aluno:" 
                 v-model="selectedStudent"
                 :options="getStudentsOptions()"
             />
         </fieldset>
 
+        <fieldset class="project-update-form__section" v-if="updatedProject.progress === 6 && $store.getters.isStudent">
+            <CustomInput
+                class="project-update-form__field"
+                label="Link para o seu projeto:" 
+                v-model="deliver.link" 
+            />
+            <CustomTextarea
+                class="project-update-form__field"
+                label="Comentários:"
+                v-model="deliver.comment"
+                :rows="4"
+            />
+            <ul class="project-update-form__possible-dates" v-if="updatedProject.meeting.possibleDate.length">
+                <span class="title">Membros:</span>
+                {{ deliver.students }}
+                <li class="project-update-form__possible-date" v-for="(student, index) in deliver.students || []" :key="student">
+                    <span>{{ getStudentName(student) }}</span>
+                    <a @click.prevent="removeMember(index)" href v-if="student !== $store.state.user.id">
+                        Remover
+                    </a>
+                    <span v-else>Você</span>
+                </li>
+            </ul>
+            <CustomSelect
+                class="project-update-form__field"
+                label="Selecionar membros:" 
+                v-model="selectedMember"
+                :options="getStudentsOptions(true)"
+            />
+            <CustomButton type="button" class="form-button" :disabled="!selectedMember" @click="selectMember()">
+                Adicionar membro
+            </CustomButton>
+        </fieldset>
+
         <fieldset class="project-update-form__section">
-            <CustomButton class="form-button" :disabled="!isValid()" v-if="!isToApproveOrDeny()">
+            <CustomButton class="form-button" :disabled="!isValid" v-if="!isToApproveOrDeny() && project.progress === 6 && $store.getters.isTeacher && project.studentResponsible">
+                Adicionar aluno
+            </CustomButton>
+            <CustomButton class="form-button" :disabled="!isValid" v-else-if="!isToApproveOrDeny()">
                 Enviar atualização
             </CustomButton>
             <CustomButton type="button" @click="submit(true)" class="form-button" v-if="isToApproveOrDeny()">
@@ -104,6 +153,7 @@ import UserService from '@/services/UserService.js';
 import CustomInput from '@/components/Forms/CustomInput.vue'
 import CustomButton from '@/components/Forms/CustomButton.vue'
 import CustomSelect from '@/components/Forms/CustomSelect.vue'
+import CustomTextarea from '@/components/Forms/CustomTextarea.vue'
 
 export default {
     name: 'ProjectUpdateForm',
@@ -114,6 +164,7 @@ export default {
         CustomInput,
         CustomButton,
         CustomSelect,
+        CustomTextarea,
     },
     mounted() {
         UserService
@@ -127,9 +178,33 @@ export default {
     computed: {
         updatedProject() {
             return this.project;
+        },
+        isValid() {
+            let project = this.updatedProject;
+            return {
+                3: this.$store.getters.isRepresentative && project.completeDescription && project.technologyDescription,
+                5: (this.$store.getters.isRepresentative && this.chosenDate) || (this.$store.getters.isCadi && project.meeting.possibleDate && project.meeting.possibleDate.length && project.meeting.address),
+                6: (this.$store.getters.isCadi && this.selectedTeacher) || 
+                    (this.$store.getters.isTeacher && this.selectedStudent) ||
+                    (this.$store.getters.isStudent && this.deliver.link)
+            }[project.progress];
         }
     },
     methods: {
+        selectMember() {
+            this.deliver.students.push(+this.selectedMember);
+            this.selectedMember = null;
+        },
+        removeMember(index) {
+            this.deliver.students.splice(index, 1);
+        },
+        getStudentName(studentId) {
+            let student = this.students.filter(student => student.id === studentId)[0];
+            return student ? student.name : '';
+        },
+        removeStudent(index) {
+            this.updatedProject.students.splice(index, 1);
+        },
         getFormTitle() {
             if (this.updated) {
                 return 'Atualizações enviadas com sucesso!';
@@ -151,24 +226,26 @@ export default {
             }
         },
         getMeetingOptions() {
-            return this.updatedProject.meeting.possibleDate.map(option => ({ value: option.dateTime }));
+            return this.updatedProject.meeting.possibleDate.map(option => ({ 
+                label: this.getFormatedDate(option.dateTime), 
+                value: option.dateTime 
+            }));
         },
         getTeachersOptions() {
-            return [{value: null}, ...this.teachers.map(teacher => ({ value: teacher.name }))];
+            return [{ value: null }, ...this.teachers.map(teacher => ({ label: teacher.name, value: teacher.id }))];
         },
         getStudentsOptions() {
-            return [{value: null}, ...this.students.map(student => ({ value: student.name }))];
+            return [
+                { value: null }, 
+                ...this.students
+                    .filter(student => student.id !== this.$store.state.user.id && 
+                        !this.deliver.students.includes(student.id) &&
+                        ((inProjectOnly && this.project.students.includes(student.id)) || (!inProjectOnly && !this.project.students.includes(student.id))))
+                    .map(student => ({ label: student.name, value: student.id }))
+            ];
         },
         isToApproveOrDeny() {
             return this.$store.getters.isCadi && [2, 4].includes(this.project.progress);
-        },
-        isValid() {
-            let project = this.updatedProject;
-            return {
-                3: this.$store.getters.isRepresentative && project.completeDescription && project.technologyDescription,
-                5: (this.$store.getters.isRepresentative && project.meeting.chosenDate) || (this.$store.getters.isCadi && project.meeting.possibleDate && project.meeting.possibleDate.length && project.meeting.address),
-                6: (this.$store.getters.isCadi && this.selectedTeacher) || (this.$store.getters.isTeacher && this.selectedStudent),
-            }[project.progress];
         },
         addPossibleDate() {
             if (!this.updatedProject.meeting.possibleDate) {
@@ -185,22 +262,45 @@ export default {
         },
         submit(approved) {
             if (this.$store.getters.isCadi && this.updatedProject.progress == 6) {
-                this.updatedProject.teacher = {
-                    id: this.teachers.filter(teacher => teacher.name === this.selectedTeacher)[0].id
-                }
+                this.updatedProject.teacher = this.selectedTeacher;;
             }
             else if (this.$store.getters.isTeacher) {
-                this.updatedProject.studentResponsible = {
-                        id: this.students.filter(student => student.name === this.selectedStudent)[0].id
-                    }
-                // this.updatedProject.students.push({
-                //         id: this.updatedProject.studentResponsible
-                //     });
+                this.updatedProject.studentResponsible = this.students.filter(student => student.id == this.selectedStudent)[0].id;
+                this.updatedProject.students.push(this.updatedProject.studentResponsible);
             }
+
+            if (this.chosenDate) {
+                this.updatedProject.meeting.chosenDate = this.chosenDate;
+            }
+            if (this.deliver.link) {
+                this.updatedProject.deliver.push(this.deliver);
+            }
+
             ProjectService.updateProject(this.updatedProject, approved).then(() => {
+                this.selectedTeacher = null;
+                this.selectedStudent = null;
+                this.deliver = {};
                 this.updated = true;
                 setTimeout(() => this.updated = false, 5000);
             });
+        },
+        dateInputIsValid() {
+            return /^(\d{2})\/(\d{2})\/(\d{4})\s(\d{2})\:(\d{2})/.test(this.newPossibleDate);
+        },
+        forceTwoChars(number) {
+            return ("0" + number).slice(-2);
+        },
+        getFormatedDate(dateRaw) {
+            let date = new Date(dateRaw);
+            let day = this.forceTwoChars(date.getDate());
+            let month = this.forceTwoChars(date.getMonth());
+            let year = date.getFullYear();
+            let hour = this.forceTwoChars(date.getHours());
+            let minute = this.forceTwoChars(date.getMinutes());
+            return `${day}/${month}/${year} ${hour}:${minute}`;
+        },
+        removePossibleDate(index) {
+            this.updatedProject.meeting.possibleDate.splice(index, 1);
         }
     },
     data() {
@@ -210,7 +310,15 @@ export default {
             teachers: [],
             students: [],
             selectedTeacher: null,
-            selectedStudent: null
+            selectedMember: null,
+            deliver: {
+                link: '',
+                comment: '',
+                responsible: this.$store.state.user.id,
+                students: [this.$store.state.user.id]
+            },
+            selectedStudent: null,
+            chosenDate: undefined
         };
     }
 }
@@ -231,6 +339,13 @@ export default {
 
         &__possible-dates {
             margin: spacing(1) 0;
+        }
+
+        &__possible-date {
+            margin: spacing(1) 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         &__section {
