@@ -85,5 +85,9 @@ export default {
             http.post("/project/update", project);
             resolve(project);
         });
+    },
+
+    addDeliver(deliver) {
+        return http.post('/deliver', deliver)
     }
 };
