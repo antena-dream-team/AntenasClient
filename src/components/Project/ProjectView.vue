@@ -124,7 +124,8 @@ export default {
     },
     methods: {
         getMembersList(ids) {
-            let date = new Date(choosenDate);	            return ids.map(id => this.students.filter(student => student.id == id)[0].name).join(', ');
+            let date = new Date(chosenDate);	            
+            return ids.map(id => this.students.filter(student => student.id == id)[0].name).join(', ');
         },
         getStudentDeliver() {
             return this.project.deliver.filter(d => d.students.includes(this.$store.state.user.id))[0];

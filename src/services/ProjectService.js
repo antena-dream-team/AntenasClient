@@ -1,6 +1,5 @@
 import http from '../helpers/Http'
 import store from '../store/index'
-import projects from './Mocks.js'
 
 export default {
 
@@ -40,8 +39,6 @@ export default {
                         project.deliver = defaulProject.deliver;
                     }
                 });
-                
-                
 
                 return projects;
             });
@@ -58,9 +55,9 @@ export default {
     updateProject(project, approved) {
         return new Promise(resolve => {
 
-            for (let index = 0; index < projects.length; index++) {
+            // for (let index = 0; index < projects.length; index++) {
                 
-                if (projects[index].id === project.id) {
+                // if (projects[index].id === project.id) {
     
                     if (store.getters.isCadi && [2, 4].includes(project.progress)) {
                         project.refused = !approved;
@@ -77,10 +74,10 @@ export default {
                         project.progress = 4;
                     }
     
-                    projects[index] = project;
-                    break;
-                }
-            }
+                    // projects[index] = project;
+                    // break;
+                // }
+            // }
             
             http.post("/project/update", project);
             resolve(project);

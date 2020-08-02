@@ -65,7 +65,9 @@ export const updateProject = (project, projectChanged) => {
     }
 
     if (projectChanged.teacher != null) {
-        project.teacher = projectChanged.teacher;
+        project.teacher = {
+            id: projectChanged.teacher
+        };
     } else {
         project.teacher = NULL;
     }
@@ -76,7 +78,9 @@ export const updateProject = (project, projectChanged) => {
         project.students = null;
     }
     project.deliver = projectChanged.deliver;
-    project.studentResponsible = projectChanged.studentResponsible;
+    project.studentResponsible = {
+        id: projectChanged.studentResponsible
+    }
 };
 
 export default { getProjectStatus, updateProject };

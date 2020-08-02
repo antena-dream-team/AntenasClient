@@ -192,7 +192,7 @@ export default {
     },
     methods: {
         selectMember() {
-            this.deliver.students.push(+this.selectedMember);
+            this.deliver.students.push({id: +this.selectedMember });
             this.selectedMember = null;
         },
         removeMember(index) {
@@ -208,20 +208,17 @@ export default {
         getFormTitle() {
             if (this.updated) {
                 return 'Atualizações enviadas com sucesso!';
-            }
-            else if (this.$store.getters.isRepresentative) {
+            } else if (this.$store.getters.isRepresentative) {
                 return 'Atualize as informações do seu projeto para prosseguir:';
-            }
-            else if (this.$store.getters.isCadi && [2, 4].includes(this.project.progress)) {
+            } else if (this.$store.getters.isCadi && [2, 4].includes(this.project.progress)) {
                 return 'Leia as especificações do projeto e decida se ele está apto a continuar:';
-            }
-            else if (this.$store.getters.isCadi && this.project.progress === 5) {
+            } else if (this.$store.getters.isCadi && this.project.progress === 5) {
                 return 'Escolha opções de datas para uma reunião com o representante do projeto:';
-            }
-            else if (this.$store.getters.isCadi && this.project.progress === 6) {
+            } else if (this.$store.getters.isCadi && this.project.progress === 6) {
                 return 'Escolha um professor cadastrado para ser o responsável por este projeto:';
-            }
-            else if (this.$store.getters.isTeacher && this.project.progress === 6) {
+            } else if (this.$store.getters.isTeacher && this.project.progress === 6) {
+                return 'Escolha um aluno responsável para o projeto:';
+            } else if (this.$store.getters.isTeacher && this.project.progress === 6 && this.project.studentResponsible != null) {
                 return 'Escolha um aluno responsável para o projeto:';
             }
         },
@@ -235,12 +232,21 @@ export default {
             return [{ value: null }, ...this.teachers.map(teacher => ({ label: teacher.name, value: teacher.id }))];
         },
         getStudentsOptions() {
+            // return [
+            //     { value: null }, 
+            //     ...this.students
+            //         .filter(student => student.id !== this.$store.state.user.id && 
+            //             !this.deliver.students.includes(student.id) &&
+            //             ((inProjectOnly && this.project.students.includes(student.id)) || (!inProjectOnly && !this.project.students.includes(student.id))))
+            //         .map(student => ({ label: student.name, value: student.id }))
+            // ];
+
             return [
                 { value: null }, 
                 ...this.students
-                    .filter(student => student.id !== this.$store.state.user.id && 
-                        !this.deliver.students.includes(student.id) &&
-                        ((inProjectOnly && this.project.students.includes(student.id)) || (!inProjectOnly && !this.project.students.includes(student.id))))
+                    // .filter(student => student.id !== this.$store.state.user.id && 
+                        // !this.deliver.students.includes(student.id) &&
+                        // ((inProjectOnly && this.project.students.includes(student.id)) || (!inProjectOnly && !this.project.students.includes(student.id))))
                     .map(student => ({ label: student.name, value: student.id }))
             ];
         },
@@ -262,11 +268,17 @@ export default {
         },
         submit(approved) {
             if (this.$store.getters.isCadi && this.updatedProject.progress == 6) {
-                this.updatedProject.teacher = this.selectedTeacher;;
+                this.updatedProject.teacher = {
+                    id: this.selectedTeacher
+                }
             }
+
             else if (this.$store.getters.isTeacher) {
-                this.updatedProject.studentResponsible = this.students.filter(student => student.id == this.selectedStudent)[0].id;
-                this.updatedProject.students.push(this.updatedProject.studentResponsible);
+                this.updatedProject.studentResponsible = {
+                    id: this.students.filter(student => student.id == this.selectedStudent)[0].id
+                }
+                // todo - adicionar o responsavel no projeto ou n? acho q n
+                // this.updatedProject.students.push(this.updatedProject.studentResponsible);
             }
 
             if (this.chosenDate) {
@@ -314,8 +326,8 @@ export default {
             deliver: {
                 link: '',
                 comment: '',
-                responsible: this.$store.state.user.id,
-                students: [this.$store.state.user.id]
+                responsible: { id: this.$store.state.user.id },
+                students: [{ id: this.$store.state.user.id }]
             },
             selectedStudent: null,
             chosenDate: undefined
